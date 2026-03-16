@@ -73,24 +73,28 @@ export async function UserSignIn(req: Request, res: Response) {
   if (!parsedData.success) {
     return res.status(400).json({
       success: false,
-      message: 'Invalid Credentials',
-      error: parsedData.error.flatten(),
+      message: 'Invalid input',
     });
   }
 
   const { email, password } = parsedData.data;
 
   try {
-    const checkUser = await prisma.user.findFirst({
+    const checkUser = await prisma.user.findUnique({
       where: {
         email: email,
+      },
+      select: {
+        id: true,
+        password: true,
+        role: true,
       },
     });
 
     if (!checkUser) {
       return res.status(401).json({
         success: false,
-        message: 'User does not exists please SingUp',
+        message: 'Invalid email or password',
       });
     }
 
@@ -99,21 +103,26 @@ export async function UserSignIn(req: Request, res: Response) {
     if (!comparePassword) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid Password',
+        message: 'Invalid email or password',
       });
+    }
+
+    if (!ENV.JWT_SECRET) {
+      throw new Error('JWT_SECRET missing');
     }
 
     const token = jwt.sign(
       { userId: checkUser.id, role: checkUser.role },
-      ENV.JWT_SECRET as string,
+      ENV.JWT_SECRET,
       { expiresIn: '7d' },
     );
 
-    res.cookie('auth-token', token, {
+    res.cookie('__Host-auth', token, {
       httpOnly: true,
       secure: ENV.NODE_ENV === 'production',
       sameSite: ENV.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/',
     });
 
     return res.status(200).json({
