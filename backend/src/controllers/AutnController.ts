@@ -163,43 +163,43 @@ export function UserSignOut(req: Request, res: Response) {
   }
 }
 
-export async function getUserDetails(req:Request,res:Response){
+export async function getUserDetails(req: Request, res: Response) {
 
-if(!req.user || !req.user.id){
-  return res.status(401).json({
-    success:false,
-    message:"Unauthorized"
-  })
-};
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized"
+    })
+  };
 
-try{
-const user = await prisma.user.findUnique({
-  where:{
-    id:req.user.id
-  },
-   select: {
-    id: true,
-    email: true,
-    username: true,
-    role: true
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: req.user.id
+      },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        role: true
+      }
+    });
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User does not exist"
+      })
+    };
+    return res.status(200).json({
+      success: true,
+      data: user
+    })
+  } catch (error) {
+    console.error("GetUserDetails Error:", error)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
   }
-});
-if(!user){
-  return res.status(400).json({
-    success:false,
-    message:"User does not exist"
-  })
-};
-return res.status(200).json({
-  success:true,
-  data:user
-})
-}catch(error){
-console.error("GetUserDetails Error:" , error)
-return res.status(500).json({
-  success:false,
-  message:"Internal server error"
-})
-}
 }
 
