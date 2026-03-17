@@ -129,8 +129,8 @@ export async function UserSignIn(req: Request, res: Response) {
     return res.status(200).json({
       success: true,
       message: 'signedIn successfully',
-      data:{
-        role:checkUser.role
+      data: {
+        role: checkUser.role
       }
     });
   } catch (error) {
@@ -142,23 +142,24 @@ export async function UserSignIn(req: Request, res: Response) {
   }
 }
 
-export function UserSignOut(req:Request,res:Response){
+export function UserSignOut(req: Request, res: Response) {
 
-  try{
-res.clearCookie("auth-token",{
-httpOnly:true,
-secure:ENV.NODE_ENV ==="production",
-sameSite: ENV.NODE_ENV === "production" ? "none" : "lax",
-})
-return res.status(200).json({
-  success:false,
-  message:"User signed out"
-})
-  }catch(error){
-console.error("internal server error",error)
-return res.status(500).json({
-  success:false,
-  message:"Internal server error"
-})
+  try {
+    res.clearCookie("auth-token", {
+      httpOnly: true,
+      secure: ENV.NODE_ENV === "production",
+      sameSite: ENV.NODE_ENV === "production" ? "none" : "lax",
+    })
+    return res.status(200).json({
+      success: false,
+      message: "User signed out"
+    })
+  } catch (error) {
+    console.error("internal server error", error)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
   }
 }
+
