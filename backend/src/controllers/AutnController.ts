@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import { SignUpSchema, SignInSchema } from '../schemas/user.schema.js';
 import jwt from 'jsonwebtoken';
 import { ENV } from '../lib/ENV.js';
+import { check } from 'zod';
 
 const SALT_ROUNDS = 12;
 
@@ -128,6 +129,9 @@ export async function UserSignIn(req: Request, res: Response) {
     return res.status(200).json({
       success: true,
       message: 'signedIn successfully',
+      data:{
+        role:checkUser.role
+      }
     });
   } catch (error) {
     console.error('Internal server error', error);
@@ -135,5 +139,26 @@ export async function UserSignIn(req: Request, res: Response) {
       success: false,
       message: 'Internal server error',
     });
+  }
+}
+
+export function UserSignOut(req:Request,res:Response){
+
+  try{
+res.clearCookie("auth-token",{
+httpOnly:true,
+secure:ENV.NODE_ENV ==="production",
+sameSite: ENV.NODE_ENV === "production" ? "none" : "lax",
+})
+return res.status(200).json({
+  success:false,
+  message:"User signed out"
+})
+  }catch(error){
+console.error("internal server error",error)
+return res.status(500).json({
+  success:false,
+  message:"Internal server error"
+})
   }
 }
