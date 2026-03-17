@@ -21,45 +21,33 @@ export async function AdminSignup(req: Request, res: Response) {
 
     try {
 
-        const checkUser = await prisma.user.findUnique({
-            where: {
-                email
-            }
-        })
-
-        if (checkUser) {
-            return res.status(409).json({
-                success: false,
-                message: "Email already exists"
-            })
-        }
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-try{
-const newUser = await prisma.user.create({
+
+     const newUser = await prisma.user.create({
             data: {
                 username,
                 email,
                 password: hashedPassword,
                 role: "ADMIN"
             }
-        });
-}catch(error:any){
-     if (error.code === "P2002") {
+        })
+
+         return res.status(201).json({
+            success: true,
+            message:"Admin created successfully",
+            data:{
+                id:newUser.id
+            }
+        })
+
+    } catch (error:any) {
+         if (error.code === "P2002") {
     return res.status(409).json({
       success: false,
       message: "Email already exists"
     });
   }
-}
-        
-
-        return res.status(201).json({
-            success: true,
-            message: "User created successfully"
-        })
-
-    } catch (error) {
-        console.error("AdminSignup Error:", error)
+console.error("AdminSignup Error:", error);
         return res.status(500).json({
             success: false,
             message: "Internal server error"
