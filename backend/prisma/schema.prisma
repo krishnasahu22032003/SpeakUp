@@ -12,21 +12,47 @@ datasource db {
 }
 
 model User {
-
-id        Int      @id              @default(autoincrement()) 
-username  String
-email     String   @unique
-password  String   
-role      ROLE     @default(USER) 
-createdAt DateTime @default(now())
-updatedAt DateTime @updatedAt
-
+  id        Int      @id @default(autoincrement())
+  username  String
+  email     String   @unique
+  password  String
+  role      ROLE     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  complaint Complaint[]
 }
 
+model Complaint {
+  id          String     @id @default(uuid())
+  complaintId String     @unique
+  userId      Int       
+  user        User       @relation(fields: [userId], references: [id])
+  title       String
+  description String
+  image       String?
+  type        ReportType
+  location    String?
+  latitude    Float?
+  longitude   Float?
+  status      STATUS     @default(PENDING)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  @@index([complaintId])
+}
+
+enum ReportType {
+  EMERGENCY
+  NON_EMERGENCY
+}
+
+enum STATUS {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  DISMISSED
+}
 
 enum ROLE {
-
-USER
-ADMIN
-
+  USER
+  ADMIN
 }
