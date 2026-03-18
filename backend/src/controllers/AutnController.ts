@@ -203,3 +203,71 @@ export async function getUserDetails(req: Request, res: Response) {
   }
 }
 
+export async function UpdateUserDetails(req: Request, res: Response) {
+  if (!req.user?.id) {
+    return res.status(401).json({
+      success: false,
+      message: "Unauthorized"
+    });
+  }
+  const UpdateUserSchema = SignUpSchema.partial()
+  const parsedData = UpdateUserSchema.safeParse(req.body);
+
+  if (!parsedData.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid input",
+      error: parsedData.error.flatten()
+    });
+  }
+
+  const { username, email, password } = parsedData.data;
+
+  try {
+    // Check if email already used by another user
+    if (email) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email }
+      });
+
+      if (existingUser && existingUser.id !== req.user.id) {
+        return res.status(409).json({
+          success: false,
+          message: "Email already in use"
+        });
+      }
+    }
+
+    let hashedPassword;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: req.user.id },
+      data: {
+        ...(username && { username }),
+        ...(email && { email }),
+        ...(hashedPassword && { password: hashedPassword })
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "User updated successfully",
+      user: {
+        id: updatedUser.id,
+        email: updatedUser.email,
+        username: updatedUser.username
+      }
+    });
+
+  } catch (error) {
+    console.error("Error updating user:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+}
