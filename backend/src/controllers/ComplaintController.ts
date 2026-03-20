@@ -42,7 +42,7 @@ export async function CreateComplaint(req: Request, res: Response) {
         return res.status(201).json({
             success: true,
             message: "Complaint created",
-            data:Complaint
+            data: Complaint
         })
 
 
@@ -54,4 +54,48 @@ export async function CreateComplaint(req: Request, res: Response) {
             message: "Internal server error "
         })
     }
+}
+
+export async function GetUserComplaint(req: Request, res: Response) {
+
+    if (!req.user || !req.user.id) {
+        return res.status(401).json({
+            success: false,
+            message: "User does not exists"
+        })
+    };
+
+    try {
+
+        const complaint = await prisma.complaint.findMany({
+            where: {
+                userId: req.user.id
+            },
+            
+            orderBy:{
+                createdAt:"desc"
+            }
+        });
+
+        if (complaint.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message:"No complaints found"
+            })
+        };
+
+        return res.status(200).json({
+            success: true,
+            message:"User complaints fetched successfully",
+            data:complaint
+        });
+
+    } catch (error) {
+        console.error("Error while getting the complaints:", error)
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    };
+
 }

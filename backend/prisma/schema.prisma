@@ -19,14 +19,14 @@ model User {
   role      ROLE     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  complaint Complaint[]
+  complaint Complaint[] 
 }
 
 model Complaint {
   id          String     @id @default(uuid())
   complaintId String     @unique
   userId      Int?      
-  user        User?       @relation(fields: [userId], references: [id])
+  user        User?       @relation(fields: [userId], references: [id] , onDelete: Cascade) 
   title       String
   description String
   image       String?     
