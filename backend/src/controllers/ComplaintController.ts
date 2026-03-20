@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { CreateComplaintSchema } from "../schemas/complaintSchema.js";
 import { v4 as uuidv4 } from 'uuid';
+import { number } from "zod";
 
 export async function CreateComplaint(req: Request, res: Response) {
 
@@ -102,7 +103,7 @@ export async function GetUserComplaint(req: Request, res: Response) {
 export async function GetAdminComplaint(req: Request, res: Response) {
 
     if (!req.user || !req.user.id || req.user.role !== "ADMIN") {
-        return res.status(401).json({
+        return res.status(403).json({
             success: false,
             message: "Unauthorized"
         })
@@ -110,26 +111,28 @@ export async function GetAdminComplaint(req: Request, res: Response) {
 
     try {
         const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 1
-        const offset = (page - 1) * limit;
+        const limit = Math.min(Number(req.query.limit) || 10, 50)
+        const skip = (page - 1) * limit;
 
-        const complaint = await prisma.complaint.findMany({
-            skip: offset,
+        const [complaint , total] = await Promise.all([
+            prisma.complaint.findMany({
+            skip,
             take: limit,
             orderBy: {
                 createdAt: "desc"
             },
-        });
-        if (complaint.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No complaints found"
-            })
-        };
-
+        }),
+        prisma.complaint.count()
+        ]) 
         return res.status(200).json({
             success: true,
-            message: "Complaints fetched successfully",
+             message: complaint.length > 0
+                ? "Complaints fetched successfully"
+                : "No complaints found",
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
             data: complaint
         });
 
@@ -140,5 +143,4 @@ export async function GetAdminComplaint(req: Request, res: Response) {
             message: "Internal server error"
         })
     };
-
 }
