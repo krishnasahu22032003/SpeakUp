@@ -69,3 +69,52 @@ export const CreateComplaintSchema = z
       path: ["location"],
     }
   );
+
+export const UpdateComplaintSchema = z.object({
+  title: z
+    .string()
+    .min(5, "Title must be at least 5 characters")
+    .max(100, "Title must not exceed 100 characters")
+    .trim()
+    .optional(),
+
+  description: z
+    .string()
+    .min(10, "Description must be at least 10 characters")
+    .max(1000, "Description too long")
+    .trim()
+    .optional(),
+
+  type: z
+    .enum(["EMERGENCY", "NON_EMERGENCY"])
+    .optional(),
+
+  location: z
+    .string()
+    .min(3, "Location too short")
+    .max(255, "Location too long")
+    .trim()
+    .optional(),
+
+  latitude: z
+    .number()
+    .min(-90, "Invalid latitude")
+    .max(90, "Invalid latitude")
+    .optional(),
+
+  longitude: z
+    .number()
+    .min(-180, "Invalid longitude")
+    .max(180, "Invalid longitude")
+    .optional(),
+
+  image: z
+    .string()
+    .url("Image must be a valid URL")
+    .optional(),
+
+})
+.strict()
+.refine((data) => Object.keys(data).length > 0, {
+  message: "At least one field must be provided for update",
+});
