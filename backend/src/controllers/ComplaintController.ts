@@ -110,7 +110,7 @@ export async function GetAdminComplaint(req: Request, res: Response) {
     };
 
     try {
-        const page = Number(req.query.page) || 1;
+        const page = Math.max(Number(req.query.page) || 1 , 1)
         const limit = Math.min(Number(req.query.limit) || 10, 50)
         const skip = (page - 1) * limit;
 
@@ -144,3 +144,51 @@ export async function GetAdminComplaint(req: Request, res: Response) {
         })
     };
 }
+
+export async function DeleteComplaint(req: Request, res: Response) {
+
+    if (!req.user?.id || req.user.role !== "ADMIN") {
+        return res.status(403).json({
+            success: false,
+            message: "Forbidden"
+        });
+    }
+
+    const { complaintId } = req.params;
+
+    if (!complaintId) {
+        return res.status(400).json({
+            success: false,
+            message: "Complaint ID is required"
+        });
+    }
+
+    try {
+        await prisma.complaint.delete({
+            where: {
+                complaintId 
+            }
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "Complaint deleted successfully"
+        });
+
+    } catch (error: any) {
+        console.error("Error while deleting the complaint", error);
+
+        if (error.code === "P2025") {
+            return res.status(404).json({
+                success: false,
+                message: "Complaint not found"
+            });
+        }
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
+    }
+}
+
