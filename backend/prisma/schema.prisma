@@ -25,8 +25,8 @@ model User {
 model Complaint {
   id          String     @id @default(uuid())
   complaintId String     @unique
-  userId      Int       
-  user        User       @relation(fields: [userId], references: [id])
+  userId      Int?      
+  user        User?       @relation(fields: [userId], references: [id])
   title       String
   description String
   image       String?
