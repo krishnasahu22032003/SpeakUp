@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
-import { CreateComplaintSchema } from "../schemas/complaintSchema.js";
+import { CreateComplaintSchema, updateComplaintSchema } from "../schemas/complaintSchema.js";
 import { v4 as uuidv4 } from 'uuid';
 
 export async function CreateComplaint(req: Request, res: Response) {
@@ -191,3 +191,52 @@ export async function DeleteComplaint(req: Request, res: Response) {
     }
 }
 
+export async function UpdateComplaint(req: Request, res: Response) {
+
+    if (!req.user || !req.user.id || req.user.role !== "ADMIN") {
+        return res.status(403).json({
+            success: false,
+            message: "Unauthorized"
+        })
+    };
+    const id = req.params.id as string
+    const parsedData = updateComplaintSchema.safeParse(req.body);
+    if(!parsedData.success){
+        return res.status(400).json({
+            success:false,
+            message:"Invalid input"
+        })
+    };
+   const {status , updatedAt} = parsedData.data ; 
+    try {
+        const result = await prisma.complaint.updateMany({
+            where: {
+                complaintId: id,
+                updatedAt: new Date(updatedAt)
+            },
+            data: {
+                status,
+
+            }
+        });
+        if (result.count === 0) {
+            return res.status(409).json({
+                success: false,
+                message:
+                    "This complaint was already updated by another admin. Please refresh.",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Complaint status updated successfully",
+        });
+
+    } catch (error) {
+        console.error("Error while Updating:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
