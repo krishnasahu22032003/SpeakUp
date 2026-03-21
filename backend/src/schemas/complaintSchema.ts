@@ -70,7 +70,7 @@ export const CreateComplaintSchema = z
     }
   );
 
-export const UpdateComplaintSchema = z.object({
+export const UserUpdateComplaintSchema = z.object({
   title: z
     .string()
     .min(5, "Title must be at least 5 characters")
@@ -119,7 +119,7 @@ export const UpdateComplaintSchema = z.object({
   message: "At least one field must be provided for update",
 });
 
-export const updateComplaintSchema = z.object({
+export const AdminupdateComplaintSchema = z.object({
   status: z.enum([
     "PENDING",
     "IN_PROGRESS",
