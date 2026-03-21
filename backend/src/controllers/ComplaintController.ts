@@ -191,7 +191,7 @@ export async function DeleteComplaint(req: Request, res: Response) {
     }
 }
 
-export async function UpdateComplaint(req: Request, res: Response) {
+export async function AdminUpdateComplaint(req: Request, res: Response) {
 
     if (!req.user || !req.user.id || req.user.role !== "ADMIN") {
         return res.status(403).json({
