@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma.js";
 import { CreateComplaintSchema } from "../schemas/complaintSchema.js";
 import { v4 as uuidv4 } from 'uuid';
-import { number } from "zod";
 
 export async function CreateComplaint(req: Request, res: Response) {
 
@@ -110,23 +109,23 @@ export async function GetAdminComplaint(req: Request, res: Response) {
     };
 
     try {
-        const page = Math.max(Number(req.query.page) || 1 , 1)
+        const page = Math.max(Number(req.query.page) || 1, 1)
         const limit = Math.min(Number(req.query.limit) || 10, 50)
         const skip = (page - 1) * limit;
 
-        const [complaint , total] = await Promise.all([
+        const [complaint, total] = await Promise.all([
             prisma.complaint.findMany({
-            skip,
-            take: limit,
-            orderBy: {
-                createdAt: "desc"
-            },
-        }),
-        prisma.complaint.count()
-        ]) 
+                skip,
+                take: limit,
+                orderBy: {
+                    createdAt: "desc"
+                },
+            }),
+            prisma.complaint.count()
+        ])
         return res.status(200).json({
             success: true,
-             message: complaint.length > 0
+            message: complaint.length > 0
                 ? "Complaints fetched successfully"
                 : "No complaints found",
             page,
@@ -154,9 +153,9 @@ export async function DeleteComplaint(req: Request, res: Response) {
         });
     }
 
-    const { complaintId } = req.params;
+    const id = req.params.id as string;
 
-    if (!complaintId) {
+    if (!id) {
         return res.status(400).json({
             success: false,
             message: "Complaint ID is required"
@@ -166,7 +165,7 @@ export async function DeleteComplaint(req: Request, res: Response) {
     try {
         await prisma.complaint.delete({
             where: {
-                complaintId 
+                id
             }
         });
 

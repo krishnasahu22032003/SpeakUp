@@ -118,3 +118,13 @@ export const UpdateComplaintSchema = z.object({
 .refine((data) => Object.keys(data).length > 0, {
   message: "At least one field must be provided for update",
 });
+
+export const updateComplaintSchema = z.object({
+  status: z.enum([
+    "PENDING",
+    "IN_PROGRESS",
+    "RESOLVED",
+    "DISMISSED",
+  ]),
+  updatedAt: z.string().datetime(),
+});
