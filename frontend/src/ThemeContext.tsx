@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type{ ReactNode } from "react";
-
+//Theme context for the application so that we can change the theme
 type Theme = "light" | "dark";
 
 type ThemeContextType = {
