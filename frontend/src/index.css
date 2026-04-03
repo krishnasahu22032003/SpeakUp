@@ -57,6 +57,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   font-family: "Inter", sans-serif;
   font-weight: 450;
@@ -247,8 +251,6 @@ small { font-size: 13px; }
   z-index: 2;
 }
 
-/* ===== PRIMARY (INSANE QUALITY) ===== */
-
 .btn-primary {
   background: var(--gradient-main);
   color: #F9FAFB;
@@ -421,4 +423,42 @@ small { font-size: 13px; }
   .nav {
     display: none;
   }
+}
+
+.theme-toggle {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+
+  color: var(--text-secondary);
+
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-soft);
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: transform 0.4s ease, opacity 0.3s ease;
+}
+
+.theme-toggle:active .icon-wrapper {
+  transform: rotate(180deg) scale(0.9);
 }

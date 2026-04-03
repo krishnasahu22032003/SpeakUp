@@ -3,7 +3,7 @@ import React, { forwardRef } from "react"
 import clsx from "clsx"
 // clsx is used to make our css classname code more readable and cleaner. It takes multiple values , ignores false values , and joins valid one into string 
 
-type ButtonVariants = " primary" | "secondary" | "ghost" | "danger";
+type ButtonVariants = "primary" | "secondary" | "ghost" | "danger";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
@@ -12,7 +12,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant = "primary", loading, children, ...props }, ref) => {
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant = "primary", loading, children , ...props }, ref) => {
 
     return (
 
@@ -36,13 +36,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(({ className, variant 
             {variant === "primary" && (
                 <>
                     <span className="btn-glow" />
-                    <span className="btn-highlights" />
+                    <span className="btn-highlight" />
                 </>
-            )};
+            )}
         </button>
-    );
+    )
 }
-);
+)
 
 Button.displayName = "Button";
 
