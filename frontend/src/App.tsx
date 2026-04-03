@@ -1,13 +1,9 @@
-import { useTheme } from "./ThemeContext";
-
-const ThemeToggle = () => {
-  const { theme, toggleTheme } = useTheme();
-
+const App = () => {
   return (
-    <button onClick={toggleTheme}>
-      Switch to {theme === "light" ? "Dark" : "Light"} Mode
-    </button>
-  );
-};
+    <div>
+      
+    </div>
+  )
+}
 
-export default ThemeToggle;
+export default App
