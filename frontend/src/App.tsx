@@ -1,11 +1,14 @@
-import Header from "./components/landing/Header"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
 
 const App = () => {
   return (
-    <div>
-      <Header/>
-    </div>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;
