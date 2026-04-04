@@ -3,9 +3,14 @@ import { ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useNavigate } from "react-router-dom";
+
 gsap.registerPlugin(ScrollTrigger);
 
 const CTA = () => {
+    
+  const navigate = useNavigate() ;
+
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -66,7 +71,7 @@ const CTA = () => {
         </p>
 
         <div className="cta-buttons flex flex-wrap justify-center gap-4">
-          <Button>
+          <Button onClick={()=>{navigate("/complaint")}}>
             Raise Voice
           </Button>
         </div>
