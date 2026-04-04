@@ -23,7 +23,7 @@ export default function Header() {
         <div className="header-inner">
 
           <div className="logo">
-            <img src="/logo.png" alt="SpeakUp Logo" />
+            <a href="/" className="-mr-2"><img src="/logo.png" alt="SpeakUp Logo" /></a>
             <span>SpeakUp</span>
           </div>
 
