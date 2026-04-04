@@ -349,7 +349,7 @@ small { font-size: 13px; }
   top: 0;
   width: 100%;
   z-index: 100;
-  height: 72px; /* ADD THIS */
+  height: 72px;
 }
 
 .header-inner {

@@ -21,7 +21,7 @@ export default function Header() {
     <>
       <header className={`header ${scrolled ? "header-scrolled" : ""}`}>
         <div className="header-inner">
-          
+
           <div className="logo">
             <img src="/logo.png" alt="SpeakUp Logo" />
             <span>SpeakUp</span>
@@ -35,14 +35,14 @@ export default function Header() {
           </nav>
 
           <div className="actions">
-            
+
             <button className="theme-toggle" onClick={toggleTheme}>
               {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
             </button>
 
             <div className="desktop-buttons">
               <Button variant="secondary">Login</Button>
-              
+
             </div>
 
             <button
@@ -57,13 +57,28 @@ export default function Header() {
 
       {open && (
         <div className="mobile-menu">
-          <a href="#about" onClick={() => setOpen(false)}>About</a>
-          <a href="#features" onClick={() => setOpen(false)}>Features</a>
-          <a href="#fight" onClick={() => setOpen(false)}>Fight</a>
-          <a href="#testimonials" onClick={() => setOpen(false)}>Testimonials</a>
 
-          <Button variant="secondary">Login</Button>
-          <Button>Report Now</Button>
+          <div className="mobile-header">
+            <button
+              className="close-btn"
+              onClick={() => setOpen(false)}
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="mobile-links">
+            <a href="#about" onClick={() => setOpen(false)}>About</a>
+            <a href="#features" onClick={() => setOpen(false)}>Features</a>
+            <a href="#fight" onClick={() => setOpen(false)}>Fight</a>
+            <a href="#testimonials" onClick={() => setOpen(false)}>Testimonials</a>
+          </div>
+
+          <div className="mobile-actions">
+            <Button variant="secondary">Login</Button>
+            <Button>Report Now</Button>
+          </div>
+
         </div>
       )}
 
@@ -165,24 +180,76 @@ export default function Header() {
           cursor: pointer;
         }
 
-        .mobile-menu {
-          position: fixed;
-          top: 70px;
-          left: 0;
-          width: 100%;
+     .mobile-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 200;
 
-          background: var(--bg-elevated);
-          backdrop-filter: blur(20px);
+  padding: 90px 20px 20px;
 
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
+  background: rgba(10, 15, 28, 0.95);
+  backdrop-filter: blur(20px);
 
-          padding: 20px;
-          border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 
-          animation: slideDown 0.3s ease;
-        }
+  animation: slideDown 0.3s ease;
+}
+  .mobile-header {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.close-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: var(--bg-glass);
+  backdrop-filter: blur(12px);
+
+  color: var(--text-primary);
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-soft);
+}
+
+/* links section */
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.mobile-links a {
+  font-size: 18px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+/* buttons section */
+.mobile-actions {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
         .mobile-menu a {
           text-decoration: none;
