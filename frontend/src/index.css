@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   --accent-core: #636EF6;
   --accent-aurora: #5FC4A8;
@@ -49,12 +51,6 @@
 
   --gradient-mesh: radial-gradient(circle at 25% 20%, rgba(99,110,246,0.18), transparent 55%),
                    radial-gradient(circle at 75% 80%, rgba(95,196,168,0.18), transparent 55%);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
 }
 
 html {
@@ -198,11 +194,11 @@ h1, h2, h3 {
   font-family: "Satoshi", "Inter", sans-serif;
 }
 
-h1 { font-size: 32px; font-weight: 700; }
+h1 { font-size: 38px; font-weight: 700; }
 h2 { font-size: 24px; font-weight: 600; }
 h3 { font-size: 18px; font-weight: 600; }
 
-p { font-size: 15px; font-weight: 400; }
+p { font-size: 16px; font-weight: 400; }
 small { font-size: 13px; }
 
 ::-webkit-scrollbar {
@@ -353,15 +349,14 @@ small { font-size: 13px; }
   top: 0;
   width: 100%;
   z-index: 100;
-
-  transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+  height: 72px; /* ADD THIS */
 }
 
 .header-inner {
   max-width: 1180px;
   margin: auto;
   padding: 16px 24px;
-
+ height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;

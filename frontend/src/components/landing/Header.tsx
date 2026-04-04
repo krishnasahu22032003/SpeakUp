@@ -42,7 +42,7 @@ export default function Header() {
 
             <div className="desktop-buttons">
               <Button variant="secondary">Login</Button>
-              <Button>Report Now</Button>
+              
             </div>
 
             <button
@@ -77,7 +77,7 @@ export default function Header() {
         }
 
         .header-scrolled {
-          background: var(--bg-glass);
+          background: transparent;
           backdrop-filter: blur(20px);
           border-bottom: 1px solid var(--border-subtle);
           box-shadow: var(--shadow-soft);

@@ -1,9 +1,11 @@
 import Header from "../components/landing/Header"
+import Hero from "../components/landing/Hero"
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen bg-(--bg-main)">
-      <Header/>
+      <Header />
+      <Hero />
     </div>
   )
 }
