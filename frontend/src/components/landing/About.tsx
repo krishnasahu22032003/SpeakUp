@@ -68,6 +68,7 @@ const About = () => {
 
   return (
     <section
+    id="about"
       ref={containerRef}
       className="relative py-22 px-6 overflow-hidden"
     >
