@@ -4,6 +4,7 @@ import Header from "../components/landing/Header"
 import Hero from "../components/landing/Hero"
 import Fight from "../components/landing/Fight"
 import Testimonials from "../components/landing/Testimonials"
+import CTA from "../components/landing/CTA"
 
 const LandingPage = () => {
   return (
@@ -14,6 +15,7 @@ const LandingPage = () => {
       <About/>
       <Fight/>
       <Testimonials/>
+      <CTA/>
     </div>
   )
 }
