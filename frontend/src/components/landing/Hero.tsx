@@ -2,8 +2,12 @@ import { ChevronDown } from "lucide-react";
 import Button from "../ui/Button";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { useNavigate } from "react-router-dom";
 
 const Hero = () => {
+
+    const navigate = useNavigate() ;
+
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -105,8 +109,8 @@ const Hero = () => {
                 </p>
 
                 <div className="hero-buttons flex flex-wrap justify-center gap-4 pt-2">
-                    <Button>Raise Voice</Button>
-                    <Button variant="secondary">Sign Up</Button>
+                    <Button onClick={()=>{navigate("/complaint")}}>Raise Voice</Button>
+                    <Button variant="secondary" onClick={()=>{navigate("/signup")}}>Sign Up</Button>
                 </div>
 
                 <div className="hero-stats flex flex-wrap justify-center gap-10 pt-5">
