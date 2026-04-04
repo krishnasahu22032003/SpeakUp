@@ -6,6 +6,10 @@ import {
   Activity,
   Lock
 } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 
 const features = [
   {
@@ -41,8 +45,56 @@ const features = [
 ];
 
 const Features = () => {
+  const containerRef = useRef(null);
+
+useEffect(() => {
+  const ctx = gsap.context(() => {
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top 80%", 
+        toggleActions: "play none none none",
+      },
+      defaults: {
+        ease: "power2.out",
+      }
+    });
+
+    tl.from(".features-title", {
+      y: 60,
+      opacity: 0,
+      duration: 1.4,
+    })
+
+    .from(".features-subtext", {
+      y: 40,
+      opacity: 0,
+      duration: 1.2,
+    }, "-=0.8")
+
+.fromTo(".feature-card",
+  {
+    y: 60,
+    opacity: 0,
+  },
+  {
+    y: 0,
+    opacity: 1,
+    duration: 1.2,
+    stagger: 0.2,
+  },
+  "-=0.6"
+)
+
+  }, containerRef);
+
+  return () => ctx.revert();
+}, []);
+
   return (
     <section
+      ref={containerRef}
       id="features"
       className="relative py-22 px-6 overflow-hidden"
     >
@@ -51,14 +103,14 @@ const Features = () => {
 
       <div className="max-w-[1100px] mx-auto text-center mb-16">
         
-        <h2 className="text-[28px] sm:text-[34px] lg:text-[42px] font-semibold text-[var(--text-primary)] tracking-tight">
+        <h2 className="features-title text-[28px] sm:text-[34px] lg:text-[42px] font-semibold text-[var(--text-primary)] tracking-tight">
           Powerful Features Built for{" "}
           <span className="bg-gradient-to-r from-[var(--accent-core)] to-[var(--accent-aurora)] bg-clip-text text-transparent">
             Real Impact
           </span>
         </h2>
 
-        <p className="mt-4 text-[16px] sm:text-[18px] text-[var(--text-secondary)] max-w-2xl mx-auto">
+        <p className="features-subtext mt-4 text-[16px] sm:text-[18px] text-[var(--text-secondary)] max-w-2xl mx-auto">
           Everything you need to report, track, and resolve issues — securely, transparently, and efficiently.
         </p>
       </div>
@@ -71,7 +123,7 @@ const Features = () => {
           return (
             <div
               key={i}
-              className="group relative p-6 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl shadow-[var(--shadow-soft)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[var(--shadow-strong)]"
+              className="feature-card group relative p-6 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl shadow-[var(--shadow-soft)] transition-all duration-500 hover:-translate-y-2 hover:shadow-[var(--shadow-strong)]"
             >
 
               <div className="absolute inset-0 rounded-[var(--radius-lg)] opacity-0 group-hover:opacity-100 transition bg-[radial-gradient(circle_at_top,rgba(99,110,246,0.15),transparent_70%)]" />
