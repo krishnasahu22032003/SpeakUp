@@ -2,8 +2,13 @@ import { useEffect, useState } from "react";
 import Button from "../ui/Button";
 import { useTheme } from "../../ThemeContext";
 import { Sun, Moon, Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
 
 export default function Header() {
+   
+  const navigate  = useNavigate()
+   
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
@@ -41,7 +46,8 @@ export default function Header() {
             </button>
 
             <div className="desktop-buttons">
-              <Button variant="secondary">Login</Button>
+
+              <Button variant="secondary" onClick={()=>{navigate("/signin")}}>Login</Button>
 
             </div>
 
