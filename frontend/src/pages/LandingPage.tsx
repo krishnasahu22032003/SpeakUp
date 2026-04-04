@@ -17,7 +17,6 @@ const LandingPage = () => {
       <Fight/>
       <Testimonials/>
       <CTA/>
-      <Footer/>
     </div>
   )
 }

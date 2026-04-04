@@ -1,15 +1,17 @@
-import { type ReactNode } from 'react'
-import Footer from '../landing/Footer'
+import Footer from "../landing/Footer";
+import { Outlet } from "react-router-dom";
 
-const Layout = ({ children }: { children: ReactNode }) => {
+const Layout = () => {
     return (
-        <div className='flex flex-col min-h-screen bg-[var(--bg-main)]'>
+        <div className="flex flex-col min-h-screen bg-[var(--bg-main)]">
+
             <main className="flex-1">
-                {children}
+                <Outlet />
             </main>
+
             <Footer />
         </div>
-    )
-}
+    );
+};
 
-export default Layout
+export default Layout;
