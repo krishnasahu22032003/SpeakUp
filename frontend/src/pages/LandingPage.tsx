@@ -5,6 +5,7 @@ import Hero from "../components/landing/Hero"
 import Fight from "../components/landing/Fight"
 import Testimonials from "../components/landing/Testimonials"
 import CTA from "../components/landing/CTA"
+import Footer from "../components/landing/Footer"
 
 const LandingPage = () => {
   return (
@@ -16,6 +17,7 @@ const LandingPage = () => {
       <Fight/>
       <Testimonials/>
       <CTA/>
+      <Footer/>
     </div>
   )
 }
