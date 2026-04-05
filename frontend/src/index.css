@@ -129,21 +129,14 @@ body {
 }
 
 .input {
-  width: 100%;
-  padding: 14px 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-elevated);
-  color: var(--text-primary);
-  transition: all 0.25s ease;
-}
-
-.input:focus {
-  border-color: var(--accent-core);
-  box-shadow: var(--glow-core);
   outline: none;
 }
 
+.input:focus {
+  outline: none;
+  border-color: var(--accent-core);
+  box-shadow: var(--glow-core);
+}
 .chat-bubble-user {
   background: var(--gradient-main);
   color: #F9FAFB;
