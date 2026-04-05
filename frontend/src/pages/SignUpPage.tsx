@@ -43,11 +43,13 @@ export default function SpeakUpSignup() {
   ];
 
 
+  const isPasswordValid = rules.every(rule => rule.valid);
+  
   async function handleSignUp() {
 
-    if (!isPasswordValid){
-      toast.error("Please complete all password requirements") ; 
-      return ;
+    if (!isPasswordValid) {
+      toast.error("Please complete all password requirements");
+      return;
     }
 
     try {
@@ -58,8 +60,8 @@ export default function SpeakUpSignup() {
         email,
         password
       });
-      
-      toast.success("Please complete all password requirements") ;
+
+      toast.success("Please complete all password requirements");
       setTimeout(() => {
         navigate("/signin");
       }, 1000);
@@ -72,8 +74,6 @@ export default function SpeakUpSignup() {
       setLoading(false);
     }
   }
-
-  const isPasswordValid = rules.every(rule => rule.valid);
 
   return (
     <main className="relative min-h-screen flex items-center justify-center px-5">
@@ -213,7 +213,10 @@ export default function SpeakUpSignup() {
                 whileTap={isPasswordValid ? { scale: 0.96 } : {}}
                 disabled={!isPasswordValid || loading}
                 onClick={handleSignUp}
-                className="btn-root btn-primary w-full text-sm h-12"
+                className={`btn-root btn-primary w-full h-12 ${(!isPasswordValid || loading)
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
+                  }`}
               >
                 <span className="btn-content">{loading ? "Creating..." : "Create Account"}</span>
                 <span className="btn-glow" />

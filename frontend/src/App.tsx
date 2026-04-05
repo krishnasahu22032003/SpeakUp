@@ -8,11 +8,11 @@ import { Toaster } from "sonner";
 
 const App = () => {
   return (
-  
+  <>
+  <Toaster position="top-center" richColors/>
     <Router>
       <Routes>
          <Route element={<Layout />}>
-        <Toaster position="top-center" richColors/>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signin" element={<SignIn/>} />
         <Route path="/signup" element={<SignUp/>} />
@@ -20,6 +20,8 @@ const App = () => {
         </Route>
       </Routes>
     </Router>
+  </>
+  
   );
 };
 
