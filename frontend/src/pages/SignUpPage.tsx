@@ -5,6 +5,7 @@ import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserSignUp } from "../lib/services/AuthService";
+import { toast } from "sonner";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -44,7 +45,10 @@ export default function SpeakUpSignup() {
 
   async function handleSignUp() {
 
-    if (!isPasswordValid) return;
+    if (!isPasswordValid){
+      toast.error("Please complete all password requirements") ; 
+      return ;
+    }
 
     try {
       setLoading(true);
@@ -54,10 +58,15 @@ export default function SpeakUpSignup() {
         email,
         password
       });
-
+      
+      toast.success("Please complete all password requirements") ;
+      setTimeout(() => {
+        navigate("/signin");
+      }, 1000);
       console.log("user Created ", user);
 
     } catch (err: any) {
+      toast.error(err.message || "SignUp Failed");
       console.log(err.message);
     } finally {
       setLoading(false);

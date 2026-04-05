@@ -4,12 +4,15 @@ import Layout from "./components/global/Layout";
 import SignIn from "./pages/SignInPage";
 import SignUp from "./pages/SignUpPage";
 import Complaint from "./pages/ComplaintPage";
+import { Toaster } from "sonner";
 
 const App = () => {
   return (
+  
     <Router>
       <Routes>
          <Route element={<Layout />}>
+        <Toaster position="top-center" richColors/>
         <Route path="/" element={<LandingPage />} />
         <Route path="/signin" element={<SignIn/>} />
         <Route path="/signup" element={<SignUp/>} />
