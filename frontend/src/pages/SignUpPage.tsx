@@ -44,7 +44,7 @@ export default function SpeakUpSignup() {
 
 
   const isPasswordValid = rules.every(rule => rule.valid);
-  
+
   async function handleSignUp() {
 
     if (!isPasswordValid) {
@@ -61,7 +61,7 @@ export default function SpeakUpSignup() {
         password
       });
 
-      toast.success("Please complete all password requirements");
+      toast.success("SingUp success");
       setTimeout(() => {
         navigate("/signin");
       }, 1000);

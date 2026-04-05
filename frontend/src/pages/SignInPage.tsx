@@ -3,6 +3,9 @@
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserSignIn } from "../lib/services/AuthService";
+import { toast } from "sonner";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -24,6 +27,35 @@ const fade = {
 
 export default function SpeakUpSignin() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
+
+  async function handleSignIn() {
+
+    try {
+      setLoading(true);
+
+      const res = await UserSignIn({
+        email,
+        password
+      });
+      toast.success("Login success");
+
+      setTimeout(() => {
+        navigate("/dashboard")
+      }, 1000);
+      console.log("User signin success", res);
+    } catch (err: any) {
+      console.error(err.message);
+      toast.error(err.message || "Error While Login");
+    } finally {
+      setLoading(false);
+    }
+
+  }
+
 
   return (
     <main className="relative min-h-screen flex items-center justify-center px-5">
@@ -56,6 +88,7 @@ export default function SpeakUpSignin() {
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                 <input
                   type="email"
+                  onChange={(e) => setEmail(e.target.value)}
                   className="input pl-11"
                   placeholder="you@speakup.app"
                 />
@@ -70,6 +103,7 @@ export default function SpeakUpSignin() {
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-muted)]" />
                 <input
                   type={showPassword ? "text" : "password"}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="input pl-11 pr-11"
                   placeholder="••••••••"
                 />
@@ -91,9 +125,11 @@ export default function SpeakUpSignin() {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.96 }}
+                onClick={handleSignIn}
                 className="btn-root btn-primary w-full h-12"
+                disabled={loading}
               >
-                <span className="btn-content">Sign In</span>
+                <span className="btn-content">{loading ? "Please Wait..." : "Sign In"}</span>
                 <span className="btn-glow" />
                 <span className="btn-highlight" />
               </motion.button>
@@ -106,7 +142,7 @@ export default function SpeakUpSignin() {
             className="mt-7 text-center text-sm text-[var(--text-muted)]"
           >
             Don’t have an account?{" "}
-            <span className="text-[var(--text-primary)] hover:underline cursor-pointer">
+            <span className="text-[var(--text-primary)] hover:underline cursor-pointer" onClick={() => { navigate("/signup") }}>
               Sign up
             </span>
           </motion.p>
