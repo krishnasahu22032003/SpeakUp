@@ -5,8 +5,15 @@ import SignIn from "./pages/SignInPage";
 import SignUp from "./pages/SignUpPage";
 import Complaint from "./pages/ComplaintPage";
 import { Toaster } from "sonner";
+import { CheckUserStore } from "./store/useAuthStore"; 
+import { useEffect } from "react";
 
 const App = () => {
+  const checkAuth  = CheckUserStore((state)=>state.checkAuth);
+
+  useEffect(()=>{
+    checkAuth();
+  },[])
   return (
   <>
   <Toaster position="top-center" richColors/>
