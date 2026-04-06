@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import { UserSignIn } from "../lib/services/AuthService";
 import { toast } from "sonner";
 import { CheckUserStore } from "../store/useAuthStore";
@@ -47,7 +47,7 @@ export default function SpeakUpSignin() {
 
       toast.success("Login success");
 
-      navigate("/user-dashboard");
+      navigate("/user-dashboard",{replace:true} );
 
     } catch (err: any) {
       console.error(err.message);
