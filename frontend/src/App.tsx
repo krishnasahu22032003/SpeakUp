@@ -7,6 +7,8 @@ import Complaint from "./pages/ComplaintPage";
 import { Toaster } from "sonner";
 import { CheckUserStore } from "./store/useAuthStore"; 
 import { useEffect } from "react";
+import UserDashboardPage from "./pages/UserDashboardPage";
+import ProtectedRoute from "./components/global/ProtectedRoute";
 
 const App = () => {
   const checkAuth  = CheckUserStore((state)=>state.checkAuth);
@@ -24,6 +26,7 @@ const App = () => {
         <Route path="/signin" element={<SignIn/>} />
         <Route path="/signup" element={<SignUp/>} />
         <Route path="/complaint" element={<Complaint/>} />
+        <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardPage/></ProtectedRoute>} />
         </Route>
       </Routes>
     </Router>

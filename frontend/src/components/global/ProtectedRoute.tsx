@@ -1,8 +1,9 @@
 import { Navigate } from "react-router-dom";
 import { CheckUserStore } from "../../store/useAuthStore";
+import type React from "react";
 
 
-const ProtectedRoute = ({childern}:{childern : JSX.element}) => {
+const ProtectedRoute = ({childern}:{childern : React.ReactNode}) => {
 
     const {isAuth , loading} = CheckUserStore();
 
