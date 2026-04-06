@@ -23,4 +23,10 @@ export function UserSignIn(User:UserDetails){
         method:"POST",
         body:JSON.stringify(User)
     })
+} 
+
+export function CheckUser(){
+    return API("user/me",{
+        method:"GET"
+    })
 }

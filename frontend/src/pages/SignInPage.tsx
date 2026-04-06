@@ -56,6 +56,7 @@ export default function SpeakUpSignin() {
 
   }
 
+  const isFormValid = email.trim() !== "" && password.trim() !== "";
 
   return (
     <main className="relative min-h-screen flex items-center justify-center px-5">
@@ -123,11 +124,12 @@ export default function SpeakUpSignin() {
 
             <motion.div variants={fade} className="pt-3">
               <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.96 }}
+                whileHover={isFormValid ? { scale: 1.03 } : {}}
+                whileTap={isFormValid ? { scale: 0.96 } : {}}
                 onClick={handleSignIn}
-                className="btn-root btn-primary w-full h-12"
-                disabled={loading}
+                className={`btn-root btn-primary w-full h-12 ${!isFormValid ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                disabled={loading || !isFormValid}
               >
                 <span className="btn-content">{loading ? "Please Wait..." : "Sign In"}</span>
                 <span className="btn-glow" />
