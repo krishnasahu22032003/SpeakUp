@@ -15,7 +15,7 @@ const App = () => {
 
   useEffect(()=>{
     checkAuth();
-  },[])
+  },[checkAuth])
   return (
   <>
   <Toaster position="top-center" richColors/>

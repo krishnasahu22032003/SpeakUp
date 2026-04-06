@@ -25,8 +25,10 @@ export function UserSignIn(User:UserDetails){
     })
 } 
 
-export function CheckUser(){
-    return API("user/me",{
-        method:"GET"
-    })
+export async function CheckUser() {
+    const res = await API<{ success: boolean; data: any }>("user/me", {
+        method: "GET"
+    });
+
+    return res.data;
 }
