@@ -20,7 +20,7 @@ export async function AuthMiddleware(
   next: NextFunction
 ) {
   const token =
-    req.cookies?.auth_token ||
+    req.cookies?.["auth-token"] ||
     req.headers.authorization?.split(" ")[1];
 
   if (!token) {

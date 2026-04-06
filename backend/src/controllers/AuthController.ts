@@ -118,7 +118,7 @@ export async function UserSignIn(req: Request, res: Response) {
       { expiresIn: '7d' },
     );
 
-    res.cookie('__Host-auth', token, {
+    res.cookie('auth-token', token, {
       httpOnly: true,
       secure: ENV.NODE_ENV === 'production',
       sameSite: ENV.NODE_ENV === 'production' ? 'none' : 'lax',

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserSignIn } from "../lib/services/AuthService";
 import { toast } from "sonner";
+import { CheckUserStore } from "../store/useAuthStore";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -31,29 +32,29 @@ export default function SpeakUpSignin() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const checkAuth = CheckUserStore((state) => state.checkAuth);
 
   async function handleSignIn() {
-
     try {
       setLoading(true);
 
-      const res = await UserSignIn({
+      await UserSignIn({
         email,
         password
       });
+
+      await checkAuth();
+
       toast.success("Login success");
 
-      setTimeout(() => {
-        navigate("/dashboard")
-      }, 1000);
-      console.log("User signin success", res);
+      navigate("/user-dashboard");
+
     } catch (err: any) {
       console.error(err.message);
       toast.error(err.message || "Error While Login");
     } finally {
       setLoading(false);
     }
-
   }
 
   const isFormValid = email.trim() !== "" && password.trim() !== "";
