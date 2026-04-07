@@ -9,7 +9,7 @@ const PublicRoute = ({ children } :{children:React.ReactNode}) => {
     checkAuth(); 
   }, []);
 
-  if (loading) return <div>Loading...</div>; 
+  if (loading) return children ;
 
   if (isAuth) {
     return (

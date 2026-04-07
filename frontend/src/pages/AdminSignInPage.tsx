@@ -6,6 +6,7 @@ import { useState } from "react";
 import {useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { AdminSignIn } from "../lib/services/AdminAuthService";
+import AdminAuthStore from "../store/AdminAuthStore";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -30,6 +31,7 @@ export default function AdminSignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
+  const {checkAdminAuth} = AdminAuthStore();
   const navigate = useNavigate();
 
 
@@ -41,7 +43,7 @@ export default function AdminSignInPage() {
         email,
         password
       });
-
+     await checkAdminAuth();
       toast.success("Login success");
 
       navigate("/admin-dashboard",{replace:true} );

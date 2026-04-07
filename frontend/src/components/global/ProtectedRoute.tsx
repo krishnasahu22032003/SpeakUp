@@ -8,9 +8,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   const { isAuth, loading, checkAuth } = CheckUserStore();
   useEffect(() => {
-    if (!isAuth) {
+   
       checkAuth();
-    }
+  
   }, []);
   if (loading) {
     return (

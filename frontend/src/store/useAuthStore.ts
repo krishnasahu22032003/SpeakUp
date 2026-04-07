@@ -14,7 +14,7 @@ export const CheckUserStore = create<AuthService>((set) => ({
 
     user: null,
     isAuth: false,
-    loading: true,
+    loading: false,
    
     async checkAuth() {
          set({loading:true})
