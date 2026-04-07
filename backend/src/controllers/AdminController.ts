@@ -175,4 +175,25 @@ export async function AdminSignIn(req: Request, res: Response) {
       message: "Internal server error",
     });
   }
+};
+
+export function AdminSignOut(req: Request, res: Response) {
+
+  try {
+    res.clearCookie("admin-token", {
+      httpOnly: true,
+      secure: ENV.NODE_ENV === "production",
+      sameSite: ENV.NODE_ENV === "production" ? "none" : "lax",
+    })
+    return res.status(200).json({
+      success: false,
+      message: "User signed out"
+    })
+  } catch (error) {
+    console.error("internal server error", error)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
 }
