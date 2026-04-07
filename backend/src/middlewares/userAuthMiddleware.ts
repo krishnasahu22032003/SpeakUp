@@ -14,60 +14,44 @@ if (!ENV.JWT_SECRET) {
 
 const secret = ENV.JWT_SECRET;
 
-export async function AuthMiddleware(
+export async function UserAuthMiddleware(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   const token =
-    req.cookies?.["auth-token"] ||
+    req.cookies?.["user-token"] ||
     req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({
       success: false,
-      message: "Token is not present",
-    });
-  }
-
-  let decoded: JwtPayload;
-
-  try {
-    decoded = jwt.verify(token, secret) as JwtPayload;
-  } catch {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid or expired token",
+      message: "User token missing",
     });
   }
 
   try {
+    const decoded = jwt.verify(token, secret) as JwtPayload;
+
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: {
-        id: true,
-        role: true,
-      },
+      select: { id: true, role: true },
     });
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: "User does not exist",
+        message: "User not found",
       });
     }
 
-    req.user = {
-      id: user.id,
-      role: user.role,
-    };
-
+    req.user = user;
     next();
-  } catch (error) {
-    console.error("Auth Middleware Error:", error);
-    return res.status(500).json({
+
+  } catch {
+    return res.status(401).json({
       success: false,
-      message: "Internal server error",
+      message: "Invalid user token",
     });
   }
 }
