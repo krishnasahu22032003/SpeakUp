@@ -17,7 +17,7 @@ export function AdminSignUp(Admin: AdminDetails) {
 
 export function AdminSignIn(Admin: AdminDetails) {
 
-    return API<AdminDetails>("/admin/signin", {
+    return API<AdminDetails>("/user/signin", {
         method: "POST",
         body: JSON.stringify(Admin)
     })
