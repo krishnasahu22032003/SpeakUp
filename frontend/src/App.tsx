@@ -13,8 +13,18 @@ import AdminSignInPage from "./pages/AdminSignInPage";
 import AdminProtectedRoute from "./components/global/AdminProtectedRoute";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminPublicRoute from "./components/global/AdminPublicRoute";
+import AdminAuthStore from "./store/AdminAuthStore";
+import { CheckUserStore } from "./store/useAuthStore";
+import { useEffect } from "react";
 
 const App = () => {
+ const { checkAdminAuth } = AdminAuthStore();
+  const { checkAuth } = CheckUserStore();
+
+  useEffect(() => {
+    checkAdminAuth(); 
+    checkAuth();     
+  }, []);
   return (
     <>
       <Toaster position="top-center" richColors />

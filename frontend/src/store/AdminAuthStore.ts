@@ -20,7 +20,7 @@ const AdminAuthStore = create<AdminAuth>((set) => ({
         set({loading : true })
         try {
             const res = await GetAdminDetails();
-            set({ admin: res.data, isAuth: true, loading: false });
+            set({ admin: res, isAuth: true, loading: false });
         } catch (err){
             set({ admin: null, isAuth: false, loading: false });
         }

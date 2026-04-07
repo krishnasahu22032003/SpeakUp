@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import { CheckUserStore } from "../../store/useAuthStore";
 
 const PublicRoute = ({ children } :{children:React.ReactNode}) => {
-  const { isAuth, loading, user, checkAuth } = CheckUserStore();
+  const { isAuth, loading, checkAuth } = CheckUserStore();
 
   useEffect(() => {
     checkAuth(); 
@@ -14,7 +14,7 @@ const PublicRoute = ({ children } :{children:React.ReactNode}) => {
   if (isAuth) {
     return (
       <Navigate
-        to={user?.role === "ADMIN" ? "/admin-dashboard" : "/user-dashboard"}
+        to="/user-dashboard"
         replace
       />
     );

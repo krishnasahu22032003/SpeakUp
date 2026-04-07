@@ -118,7 +118,7 @@ export async function UserSignIn(req: Request, res: Response) {
       { expiresIn: '7d' },
     );
 
-    res.cookie('auth-token', token, {
+    res.cookie('user-token', token, {
       httpOnly: true,
       secure: ENV.NODE_ENV === 'production',
       sameSite: ENV.NODE_ENV === 'production' ? 'none' : 'lax',
@@ -145,7 +145,7 @@ export async function UserSignIn(req: Request, res: Response) {
 export function UserSignOut(req: Request, res: Response) {
 
   try {
-    res.clearCookie("auth-token", {
+    res.clearCookie("user-token", {
       httpOnly: true,
       secure: ENV.NODE_ENV === "production",
       sameSite: ENV.NODE_ENV === "production" ? "none" : "lax",

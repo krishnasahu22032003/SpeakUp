@@ -3,13 +3,7 @@ import { useEffect } from "react";
 import AdminAuthStore from "../../store/AdminAuthStore";
 
 const AdminPublicRoute = ({ children }:{children : React.ReactNode}) => {
-  const { isAuth, loading, checkAdminAuth } = AdminAuthStore();
-
-  useEffect(() => {
-    checkAdminAuth();
-  }, []);
-
-  if (loading) return children ;
+  const { isAuth } = AdminAuthStore();
 
   if (isAuth) {
     return <Navigate to="/admin-dashboard" replace />;

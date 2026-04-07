@@ -1,12 +1,8 @@
 import { Navigate } from "react-router-dom";
 import AdminAuthStore from "../../store/AdminAuthStore";
-import { useEffect } from "react";
 const AdminProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
-    const { isAuth, admin, loading, checkAdminAuth } = AdminAuthStore();
-    useEffect(() => {
-        checkAdminAuth()
-    }, [])
+    const { isAuth, admin, loading } = AdminAuthStore();
 
     if (loading) {
         return (
