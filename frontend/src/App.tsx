@@ -12,6 +12,8 @@ import ProtectedRoute from "./components/global/ProtectedRoute";
 import PublicRoute from "./components/global/PublicRoute";
 import AdminSignup from "./pages/AdminSignUpPage";
 import AdminSignInPage from "./pages/AdminSignInPage";
+import AdminProtectedRoute from "./components/global/AdminProtectedRoute";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 const App = () => {
   const checkAuth = CheckUserStore((state) => state.checkAuth);
@@ -28,10 +30,11 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signin" element={<PublicRoute> <SignIn /> </PublicRoute>} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/admin/signup" element={<AdminSignup/>}/>
+            <Route path="/admin/signup" element={<PublicRoute><AdminSignInPage/></PublicRoute>} />
             <Route path="/admin/signin" element={<AdminSignInPage/>}/>
             <Route path="/complaint" element={<Complaint />} />
             <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardPage /></ProtectedRoute>} />
+            <Route path="/admin-dashboard" element={<AdminProtectedRoute>< AdminDashboardPage/></AdminProtectedRoute>} />
           </Route>
         </Routes>
       </Router>

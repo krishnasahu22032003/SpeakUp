@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { CheckUserStore } from "../../store/useAuthStore";
 
-const AdminRoute = ({ children }: { children: React.ReactNode }) => {
+const AdminProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
     const { isAuth, user, loading } = CheckUserStore();
 
@@ -47,4 +47,5 @@ if(user?.role !== "ADMIN"){
 return children ;
 };
 
+export default AdminProtectedRoute ;
 
