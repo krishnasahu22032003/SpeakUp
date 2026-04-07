@@ -18,8 +18,16 @@ export function AdminSignUp(Admin: AdminDetails) {
 
 export function AdminSignIn(Admin: AdminDetails) {
 
-    return API<AdminDetails>("user/signin", {
+    return API<AdminDetails>("signin", {
         method: "POST",
         body: JSON.stringify(Admin)
     })
+};
+
+export async function GetAdminDetails(){
+
+const res = await AdminAPI<{success:boolean , data:any}>("me",{
+    method:"GET"
+})
+return res.data ;
 };
