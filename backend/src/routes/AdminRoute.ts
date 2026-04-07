@@ -6,6 +6,7 @@ import { AuthMiddleware } from "../middlewares/userAuthMiddleware.js";
 const AdminRouter = express.Router();
 
 AdminRouter.post('/signup', AdminSignup);
+AdminRouter.post('/signin', AdminSignup);
 AdminRouter.get('/me',AuthMiddleware,AdminMiddleware, GetAdminDetails);
 
 export default AdminRouter

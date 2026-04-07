@@ -1,8 +1,9 @@
 import { type Request, type Response } from "express";
 import { prisma } from "../lib/prisma.js";
-import { SignUpSchema } from "../schemas/user.schema.js";
+import { SignInSchema, SignUpSchema } from "../schemas/user.schema.js";
 import bcrypt from "bcrypt";
-
+import { ENV } from "../lib/ENV.js";
+import jwt from "jsonwebtoken"
 const SALT_ROUNDS = 12;
 
 export async function AdminSignup(req: Request, res: Response) {
@@ -91,5 +92,87 @@ try{
       success: false,
       message: "Internal server error"
     })
+  }
+}
+
+export async function AdminSignIn(req: Request, res: Response) {
+  const parsedData = SignInSchema.safeParse(req.body);
+
+  if (!parsedData.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid input",
+    });
+  }
+
+  const { email, password } = parsedData.data;
+
+  try {
+    const checkUser = await prisma.user.findUnique({
+      where: { email },
+      select: {
+        id: true,
+        password: true,
+        role: true,
+      },
+    });
+
+    if (!checkUser) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    if (checkUser.role !== "ADMIN") {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied: Admins only",
+      });
+    }
+
+    const comparePassword = await bcrypt.compare(password, checkUser.password);
+
+    if (!comparePassword) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    if (!ENV.JWT_SECRET) {
+      throw new Error("JWT_SECRET missing");
+    }
+
+    const token = jwt.sign(
+      { userId: checkUser.id, role: checkUser.role },
+      ENV.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("admin-token", token, {
+      httpOnly: true,
+      secure: ENV.NODE_ENV === "production",
+      sameSite: ENV.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: "/",
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Signed in successfully",
+      data: {
+        id: checkUser.id,
+        role: checkUser.role,
+      },
+    });
+
+  } catch (error) {
+    console.error("Internal server error", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 }
