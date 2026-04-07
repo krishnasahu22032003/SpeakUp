@@ -16,11 +16,6 @@ import AdminProtectedRoute from "./components/global/AdminProtectedRoute";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 const App = () => {
-  const checkAuth = CheckUserStore((state) => state.checkAuth);
-
-  useEffect(() => {
-    checkAuth();
-  }, [checkAuth])
   return (
     <>
       <Toaster position="top-center" richColors />

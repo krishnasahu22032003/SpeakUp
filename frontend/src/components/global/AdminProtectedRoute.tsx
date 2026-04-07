@@ -1,9 +1,12 @@
 import { Navigate } from "react-router-dom";
-import { CheckUserStore } from "../../store/useAuthStore";
-
+import AdminAuthStore from "../../store/AdminAuthStore";
+import { useEffect } from "react";
 const AdminProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
-    const { isAuth, user, loading } = CheckUserStore();
+    const { isAuth, admin, loading, checkAdminAuth } = AdminAuthStore();
+    useEffect(() => {
+        checkAdminAuth()
+    }, [])
 
     if (loading) {
         return (
@@ -37,15 +40,15 @@ const AdminProtectedRoute = ({ children }: { children: React.ReactNode }) => {
         );
     }
 
-if(!isAuth){
-    return <Navigate to="/admin/signin"/>
+    if (!isAuth) {
+        return <Navigate to="/admin/signin" />
+    };
+
+    if (admin?.role !== "ADMIN") {
+        return <Navigate to="/" />
+    }
+    return children;
 };
 
-if(user?.role !== "ADMIN"){
-    return <Navigate to="/"/>
-}
-return children ;
-};
-
-export default AdminProtectedRoute ;
+export default AdminProtectedRoute;
 

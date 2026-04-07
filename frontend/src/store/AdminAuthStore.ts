@@ -14,14 +14,18 @@ const AdminAuthStore = create<AdminAuth>((set) => ({
 
     admin: null,
     isAuth: false,
-    loading: true,
+    loading: false,
+
     async checkAdminAuth() {
+        set({loading : true })
         try {
             const res = await GetAdminDetails();
             set({ admin: res.data, isAuth: true, loading: false });
-        } catch {
+        } catch (err){
             set({ admin: null, isAuth: false, loading: false });
         }
     }
 
 }));
+
+export default AdminAuthStore ;

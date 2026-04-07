@@ -1,10 +1,15 @@
+import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { CheckUserStore } from "../../store/useAuthStore";
 
-const PublicRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuth, loading, user } = CheckUserStore();
+const PublicRoute = ({ children } :{children:React.ReactNode}) => {
+  const { isAuth, loading, user, checkAuth } = CheckUserStore();
 
-  if (loading) return null;
+  useEffect(() => {
+    checkAuth(); 
+  }, []);
+
+  if (loading) return <div>Loading...</div>; 
 
   if (isAuth) {
     return (

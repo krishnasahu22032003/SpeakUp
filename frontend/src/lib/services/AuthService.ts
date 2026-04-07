@@ -11,7 +11,7 @@ interface UserDetails {
 
 export function UserSignUp(User: UserDetails) {
 
-    return API<UserDetails>("user/signup", {
+    return API<UserDetails>("signup", {
         method: "POST",
         body: JSON.stringify(User)
     })
