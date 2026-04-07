@@ -19,14 +19,14 @@ export function UserSignUp(User: UserDetails) {
 
 export function UserSignIn(User:UserDetails){
 
-    return API<UserDetails>("user/signin",{
+    return API<UserDetails>("signin",{
         method:"POST",
         body:JSON.stringify(User)
     })
 } 
 
 export async function CheckUser() {
-    const res = await API<{ success: boolean; data: any }>("user/me", {
+    const res = await API<{ success: boolean; data: any }>("me", {
         method: "GET"
     });
 

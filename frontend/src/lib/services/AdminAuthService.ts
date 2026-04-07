@@ -1,4 +1,5 @@
 import API from "../../api/UserAPI";
+import AdminAPI from "../../api/AdminApi";
 
 interface AdminDetails {
 
@@ -9,7 +10,7 @@ interface AdminDetails {
 
 export function AdminSignUp(Admin: AdminDetails) {
 
-    return API<AdminDetails>("admin/signup", {
+    return AdminAPI<AdminDetails>("/signup", {
         method: "POST",
         body: JSON.stringify(Admin)
     })
