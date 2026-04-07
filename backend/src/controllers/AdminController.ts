@@ -53,4 +53,43 @@ console.error("AdminSignup Error:", error);
             message: "Internal server error"
         })
     }
+} ;
+
+export async function GetAdminDetails(req:Request , res:Response){
+
+if(!req.user || !req.user.id || req.user.role !== "ADMIN"){
+    return res.status(403).json({
+        success:false,
+        message:"Unauthorized"
+    });
+};
+
+try{
+
+    const admin = await prisma.user.findUnique({
+        where:{id:req.user.id}, 
+        select:{
+        id:true,
+        username:true,
+        email:true,
+        role:true
+    }
+    });
+   if(!admin){
+     return res.status(404).json({
+        success: false,
+        message: "User does not exist"
+      })
+   };
+    return res.status(200).json({
+      success: true,
+      data: admin
+    })
+}catch (error) {
+    console.error("GetAdminDetails Error:", error)
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
 }

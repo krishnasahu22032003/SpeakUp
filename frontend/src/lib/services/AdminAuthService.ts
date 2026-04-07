@@ -9,7 +9,7 @@ interface AdminDetails {
 
 export function AdminSignUp(Admin: AdminDetails) {
 
-    return API<AdminDetails>("/admin/signup", {
+    return API<AdminDetails>("admin/signup", {
         method: "POST",
         body: JSON.stringify(Admin)
     })
@@ -17,7 +17,7 @@ export function AdminSignUp(Admin: AdminDetails) {
 
 export function AdminSignIn(Admin: AdminDetails) {
 
-    return API<AdminDetails>("/user/signin", {
+    return API<AdminDetails>("user/signin", {
         method: "POST",
         body: JSON.stringify(Admin)
     })
