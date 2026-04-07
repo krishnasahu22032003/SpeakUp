@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff, User } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserSignUp } from "../lib/services/AuthService";
 import { toast } from "sonner";
+import { AdminSignUp } from "../lib/services/AdminAuthService";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -27,7 +27,8 @@ const fade = {
 
 
 
-export default function SpeakUpSignup() {
+export default function AdminSignup() {
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [password, setPassword] = useState("");
@@ -55,7 +56,7 @@ export default function SpeakUpSignup() {
     try {
       setLoading(true);
 
-      const user = await UserSignUp({
+      const admin = await AdminSignUp({
         username,
         email,
         password
@@ -63,9 +64,9 @@ export default function SpeakUpSignup() {
 
       toast.success("SingUp success");
       setTimeout(() => {
-        navigate("/signin");
+        navigate("/admin/signin");
       }, 1000);
-      console.log("user Created ", user);
+      console.log("user Created ", admin);
 
     } catch (err: any) {
       toast.error(err.message || "SignUp Failed");

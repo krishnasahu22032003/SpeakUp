@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import UserDashboardPage from "./pages/UserDashboardPage";
 import ProtectedRoute from "./components/global/ProtectedRoute";
 import PublicRoute from "./components/global/PublicRoute";
+import AdminSignup from "./pages/AdminSignUpPage";
+import AdminSignInPage from "./pages/AdminSignInPage";
 
 const App = () => {
   const checkAuth = CheckUserStore((state) => state.checkAuth);
@@ -26,6 +28,8 @@ const App = () => {
             <Route path="/" element={<LandingPage />} />
             <Route path="/signin" element={<PublicRoute> <SignIn /> </PublicRoute>} />
             <Route path="/signup" element={<SignUp />} />
+            <Route path="/admin/signup" element={<AdminSignup/>}/>
+            <Route path="/admin/signin" element={<AdminSignInPage/>}/>
             <Route path="/complaint" element={<Complaint />} />
             <Route path="/user-dashboard" element={<ProtectedRoute><UserDashboardPage /></ProtectedRoute>} />
           </Route>
