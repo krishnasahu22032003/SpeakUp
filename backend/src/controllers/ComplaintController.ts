@@ -8,6 +8,7 @@ export async function CreateComplaint(req: Request, res: Response) {
     const ComplaintData = CreateComplaintSchema.safeParse(req.body);
 
     if (!ComplaintData.success) {
+         console.log(ComplaintData.error.flatten());
         return res.status(400).json({
             success: false,
             message: "invalid input",

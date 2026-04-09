@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
+import ComplaintHeader from "../components/ui/ComplaintHeader";
 
 type FormState = {
   title: string;
@@ -122,9 +123,12 @@ useEffect(() => {
         description: form.description,
         type: form.type,
         location: form.location || undefined,
-        latitude: form.latitude ? Number(form.latitude) : undefined,
-        longitude: form.longitude ? Number(form.longitude) : undefined,
-        image: imageUrls, // send array (backend should support)
+       latitude:
+  form.latitude.trim() !== "" ? Number(form.latitude) : undefined,
+
+longitude:
+  form.longitude.trim() !== "" ? Number(form.longitude) : undefined,
+        image: imageUrls,
       };
 
       await CreateComplaint(payload);
@@ -142,7 +146,7 @@ useEffect(() => {
       });
 
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/");
       }, 1500);
 
     } catch (err: any) {
@@ -154,9 +158,11 @@ useEffect(() => {
   };
 
 return (
+<>
+<ComplaintHeader/>
 <div
   ref={containerRef}
-  className="min-h-screen px-4 py-12 md:py-16 flex items-center justify-center relative overflow-hidden bg-[var(--bg-base)]"
+  className="min-h-screen px-4 py-24 md:py-24 flex items-center justify-center relative overflow-hidden bg-[var(--bg-base)]"
 >
     <div className="absolute inset-0 -z-10 bg-[var(--gradient-mesh)] blur-[120px] opacity-60" />
 
@@ -287,6 +293,8 @@ return (
 
     </div>
   </div>
+</>
+
 );
 };
 
