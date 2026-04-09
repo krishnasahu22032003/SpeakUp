@@ -10,6 +10,18 @@ type CreateComplaintPayload = {
   image?: string[];
 };
 
+type Complaint = {
+  id: string;
+  title: string;
+  description: string;
+  status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "DISMISSED";
+  createdAt: string;
+  location?: string;
+  latitude?: number;
+  longitude?: number;
+  image?: string[];
+};
+
 export async function CreateComplaint(data: CreateComplaintPayload) {
   return ComplaintAPI<{ success: boolean; message: string; data: any }>(
     "create",
@@ -18,4 +30,14 @@ export async function CreateComplaint(data: CreateComplaintPayload) {
       body: JSON.stringify(data),
     }
   );
+};
+
+export async function GetUserComplaints(page = 1, limit = 10) {
+  return ComplaintAPI<{
+    success: boolean;
+    message: string;
+    data: Complaint[];
+  }>(`user-complaints?page=${page}&limit=${limit}`, {
+    method: "GET",
+  });
 }
