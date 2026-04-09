@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { compressImage } from "../utils/compressImage";
+import gsap from "gsap";
 
 type FormState = {
   title: string;
@@ -11,6 +13,8 @@ type FormState = {
 };
 
 const ComplaintPage = () => {
+  const containerRef = useRef(null);
+
   const [form, setForm] = useState<FormState>({
     title: "",
     description: "",
@@ -21,42 +25,91 @@ const ComplaintPage = () => {
     images: [],
   });
 
-  const handleChange = (e:any) => {
-    const { name, value, files } = e.target;
-    if (name === "images") {
-      const selected = Array.from(files || []) as File[];
-      setForm({ ...form, images: [...form.images, ...selected] });
-    } else {
-      setForm({ ...form, [name]: value });
-    }
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+      tl.from(".c-heading", { y: 40, opacity: 0, duration: 1 })
+        .from(".c-sub", { y: 30, opacity: 0, duration: 1 }, "-=0.6")
+        .from(".c-field", {
+          y: 30,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.08,
+        }, "-=0.6")
+        .from(".c-upload", { y: 30, opacity: 0, duration: 0.8 }, "-=0.5")
+        .from(".c-submit", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5");
+
+      gsap.to(".c-glow", {
+        y: 50,
+        duration: 8,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const removeImage = (index:number) => {
-    const updated = form.images.filter((_, i) => i !== index);
-    setForm({ ...form, images: updated });
+  const handleImages = async (files: FileList) => {
+    const fileArray = Array.from(files) as File[];
+
+    const compressedImages = await Promise.all(
+      fileArray.map((file) => compressImage(file))
+    );
+
+    const uniqueImages = compressedImages.filter(
+      (newImg) =>
+        !form.images.some((img) => img.name === newImg.name)
+    );
+
+    setForm((prev) => ({
+      ...prev,
+      images: [...prev.images, ...uniqueImages],
+    }));
+  };
+
+  const removeImage = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
   };
 
   return (
-    <div className="min-h-screen px-4 py-24 flex items-center justify-center relative overflow-hidden">
+    <div
+      ref={containerRef}
+      className="min-h-screen px-4 py-24 flex items-center justify-center relative overflow-hidden"
+    >
       <div className="absolute inset-0 -z-10 bg-[var(--gradient-mesh)] blur-[120px] opacity-60" />
+
+      <div className="c-glow absolute top-[40%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-[var(--accent-core)] opacity-20 blur-[140px] rounded-full" />
 
       <div className="w-full max-w-3xl bg-[var(--bg-glass)] backdrop-blur-2xl border border-[var(--border-subtle)] rounded-[var(--radius-lg)] shadow-[var(--shadow-strong)] p-6 md:p-9 space-y-6">
 
         <div className="text-center space-y-2">
-          <h1 className="text-[30px] md:text-[36px] font-semibold tracking-tight text-[var(--text-primary)]">
+          <h1 className="c-heading text-[30px] md:text-[36px] font-semibold tracking-tight text-[var(--text-primary)]">
             Raise a {" "}
             <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),var(--accent-aurora))]">
               Complaint
             </span>
           </h1>
-          <p className="text-[14px] md:text-[15px] text-[var(--text-secondary)] max-w-lg mx-auto">
+          <p className="c-sub text-[14px] md:text-[15px] text-[var(--text-secondary)] max-w-lg mx-auto">
             Share your concern clearly and securely. We make sure it reaches the right hands.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <div className="col-span-2">
+          <div className="c-field col-span-2">
             <label className="text-xs text-[var(--text-muted)]">Title</label>
             <input
               name="title"
@@ -67,7 +120,7 @@ const ComplaintPage = () => {
             />
           </div>
 
-          <div className="col-span-2">
+          <div className="c-field col-span-2">
             <label className="text-xs text-[var(--text-muted)]">Description</label>
             <textarea
               name="description"
@@ -79,7 +132,7 @@ const ComplaintPage = () => {
             />
           </div>
 
-          <div>
+          <div className="c-field">
             <label className="text-xs text-[var(--text-muted)]">Type</label>
             <select
               name="type"
@@ -92,7 +145,7 @@ const ComplaintPage = () => {
             </select>
           </div>
 
-          <div>
+          <div className="c-field">
             <label className="text-xs text-[var(--text-muted)]">Location</label>
             <input
               name="location"
@@ -103,7 +156,7 @@ const ComplaintPage = () => {
             />
           </div>
 
-          <div>
+          <div className="c-field">
             <label className="text-xs text-[var(--text-muted)]">Latitude</label>
             <input
               name="latitude"
@@ -114,7 +167,7 @@ const ComplaintPage = () => {
             />
           </div>
 
-          <div>
+          <div className="c-field">
             <label className="text-xs text-[var(--text-muted)]">Longitude</label>
             <input
               name="longitude"
@@ -125,11 +178,27 @@ const ComplaintPage = () => {
             />
           </div>
 
-          <div className="col-span-2">
+          <div className="c-upload col-span-2">
             <label className="text-xs text-[var(--text-muted)]">Upload Images</label>
-            <label className="mt-1 w-full border border-dashed border-[var(--border-subtle)] rounded-[var(--radius-md)] p-5 flex flex-col items-center justify-center gap-2 bg-[var(--bg-elevated)] hover:border-[var(--accent-core)] transition-all cursor-pointer">
-              <input type="file" name="images" accept="image/*" multiple onChange={handleChange} className="hidden" />
-              <span className="text-sm text-[var(--text-secondary)]">Click to upload multiple images</span>
+
+            <input
+              id="imageUpload"
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) handleImages(e.target.files);
+              }}
+            />
+
+            <label
+              htmlFor="imageUpload"
+              className="mt-1 w-full border border-dashed border-[var(--border-subtle)] rounded-[var(--radius-md)] p-5 flex flex-col items-center justify-center gap-2 bg-[var(--bg-elevated)] hover:border-[var(--accent-core)] transition-all cursor-pointer"
+            >
+              <span className="text-sm text-[var(--text-secondary)]">
+                Click to upload multiple images
+              </span>
             </label>
 
             {form.images.length > 0 && (
@@ -138,11 +207,19 @@ const ComplaintPage = () => {
                   const url = URL.createObjectURL(img);
                   return (
                     <div key={i} className="relative group">
-                      <img src={url} className="w-full h-24 object-cover rounded-[12px]" />
+                      <img
+                        src={url}
+                        onLoad={(e) =>
+                          URL.revokeObjectURL(
+                            (e.target as HTMLImageElement).src
+                          )
+                        }
+                        className="w-full h-24 object-cover rounded-[12px]"
+                      />
                       <button
                         type="button"
                         onClick={() => removeImage(i)}
-                        className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/60 text-white text-xs opacity-0 group-hover:opacity-100 transition"
+                        className="absolute cursor-pointer top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/70 text-white text-xs opacity-100 md:opacity-0 md:group-hover:opacity-100 transition"
                       >
                         ✕
                       </button>
@@ -154,7 +231,7 @@ const ComplaintPage = () => {
           </div>
         </div>
 
-        <div className="flex justify-center pt-2">
+        <div className="c-submit flex justify-center pt-2">
           <button className="btn-root btn-primary">
             <span className="btn-content">Submit Complaint</span>
             <span className="btn-glow" />
