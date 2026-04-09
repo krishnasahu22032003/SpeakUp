@@ -61,47 +61,41 @@ const Complaint = await prisma.complaint.create({
 
 export async function GetUserComplaint(req: Request, res: Response) {
 
-    if (!req.user || !req.user.id) {
-        return res.status(401).json({
-            success: false,
-            message: "User does not exists"
-        })
-    };
+  if (!req.user?.id) {
+    return res.status(401).json({
+      success: false,
+      message: "User does not exist"
+    });
+  }
 
-    try {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
 
-        const complaint = await prisma.complaint.findMany({
-            where: {
-                userId: req.user.id
-            },
+    const complaint = await prisma.complaint.findMany({
+      where: { userId: req.user.id },
+      orderBy: { createdAt: "desc" },
+      skip,
+      take: limit,
+    });
 
-            orderBy: {
-                createdAt: "desc"
-            }
-        });
+    return res.status(200).json({
+      success: true,
+      message: complaint.length === 0 
+        ? "No complaints yet" 
+        : "User complaints fetched successfully",
+      data: complaint
+    });
 
-        if (complaint.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: "No complaints found"
-            })
-        };
-
-        return res.status(200).json({
-            success: true,
-            message: "User complaints fetched successfully",
-            data: complaint
-        });
-
-    } catch (error) {
-        console.error("Error while getting the complaints:", error)
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
-    };
+  } catch (error) {
+    console.error("Error while getting complaints:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
 }
-
 export async function GetAdminComplaint(req: Request, res: Response) {
 
     if (!req.user || !req.user.id || req.user.role !== "ADMIN") {
