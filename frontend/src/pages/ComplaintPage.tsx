@@ -5,6 +5,7 @@ import { CreateComplaint } from "../lib/services/ComplaintService";
 import gsap from "gsap";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import Button from "../components/ui/Button";
 
 type FormState = {
   title: string;
@@ -34,27 +35,32 @@ const ComplaintPage = () => {
 
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+useEffect(() => {
+  const ctx = gsap.context(() => {
+    gsap.set([".c-heading", ".c-sub", ".c-field", ".c-upload", ".c-submit"], {
+      opacity: 1,
+      y: 0,
+    });
 
-      tl.from(".c-heading", { y: 40, opacity: 0, duration: 1 })
-        .from(".c-sub", { y: 30, opacity: 0, duration: 1 }, "-=0.6")
-        .from(".c-field", { y: 30, opacity: 0, duration: 0.8, stagger: 0.08 }, "-=0.6")
-        .from(".c-upload", { y: 30, opacity: 0, duration: 0.8 }, "-=0.5")
-        .from(".c-submit", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5");
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-      gsap.to(".c-glow", {
-        y: 50,
-        duration: 8,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-    }, containerRef);
+    tl.from(".c-heading", { y: 30, opacity: 0, duration: 1.2 })
+      .from(".c-sub", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5")
+      .from(".c-field", { y: 20, opacity: 0, duration: 0.6, stagger: 0.06 }, "-=0.4")
+      .from(".c-upload", { y: 20, opacity: 0, duration: 0.6 }, "-=0.4")
+      .from(".c-submit", { y: 15, opacity: 0, duration: 0.6 }, "-=0.4");
 
-    return () => ctx.revert();
-  }, []);
+    gsap.to(".c-glow", {
+      y: 40,
+      duration: 6,
+      repeat: -1,
+      yoyo: true,
+      ease: "sine.inOut",
+    });
+  }, containerRef);
+
+  return () => ctx.revert();
+}, []);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -147,81 +153,141 @@ const ComplaintPage = () => {
     }
   };
 
-  return (
-    <div ref={containerRef} className="min-h-screen px-4 py-24 flex items-center justify-center relative overflow-hidden">
+return (
+<div
+  ref={containerRef}
+  className="min-h-screen px-4 py-12 md:py-16 flex items-center justify-center relative overflow-hidden bg-[var(--bg-base)]"
+>
+    <div className="absolute inset-0 -z-10 bg-[var(--gradient-mesh)] blur-[120px] opacity-60" />
 
-      <div className="absolute inset-0 -z-10 bg-[var(--gradient-mesh)] blur-[120px] opacity-60" />
+    <div className="c-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[var(--accent-core)] opacity-20 blur-[160px] rounded-full" />
 
-      <div className="c-glow absolute top-[40%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-[var(--accent-core)] opacity-20 blur-[140px] rounded-full" />
+    <div className="w-full max-w-4xl bg-[var(--bg-glass)] backdrop-blur-2xl border border-[var(--border-subtle)] rounded-[var(--radius-lg)] shadow-[var(--shadow-strong)] px-6 md:px-10 py-8 md:py-10 space-y-8">
 
-      <div className="w-full max-w-3xl bg-[var(--bg-glass)] backdrop-blur-2xl border border-[var(--border-subtle)] rounded-[var(--radius-lg)] shadow-[var(--shadow-strong)] p-6 md:p-9 space-y-6">
+      <div className="text-center space-y-3">
+        <h1 className="c-heading text-[30px] md:text-[40px] font-semibold tracking-tight text-[var(--text-primary)] leading-tight">
+          Raise a{" "}
+          <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),var(--accent-aurora))]">
+            Complaint
+          </span>
+        </h1>
+        <p className="c-sub text-[15px] md:text-[16px] text-[var(--text-secondary)] max-w-xl mx-auto leading-relaxed">
+          Share your concern clearly and securely. Your report helps us take faster and smarter action.
+        </p>
+      </div>
+<div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-5">
 
-        <div className="text-center space-y-2">
-          <h1 className="c-heading text-[30px] md:text-[36px] font-semibold">
-            Raise a <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),var(--accent-aurora))]">Complaint</span>
-          </h1>
-          <p className="c-sub text-[var(--text-secondary)]">
-            Share your concern clearly and securely.
-          </p>
-        </div>
+      <input
+  name="title"
+  value={form.title}
+  onChange={handleChange}
+  placeholder="Complaint title"
+ className="c-field w-full md:col-span-2 h-12 px-4 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
+/>
+<textarea
+  name="description"
+  value={form.description}
+  onChange={handleChange}
+  placeholder="Describe the issue in detail..."
+  rows={5}
+   className="c-field w-full md:col-span-2 px-4 py-3 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] resize-none"
+/>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <input name="title" value={form.title} onChange={handleChange} placeholder="Title"
-            className="c-field px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] col-span-2" />
+<div className="relative w-full md:w-auto md:col-span-1">
+  <select
+    name="type"
+    value={form.type}
+    onChange={handleChange}
+    className="c-field text-sm md:text-base truncate w-full h-12 px-4 pr-10 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] appearance-none truncate overflow-hidden whitespace-nowrap"
+  >
+    <option value="NON_EMERGENCY">Non Emergency</option>
+    <option value="EMERGENCY">Emergency</option>
+  </select>
 
-          <textarea name="description" value={form.description} onChange={handleChange}
-            className="c-field px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] col-span-2" />
+</div>
 
-          <select name="type" value={form.type} onChange={handleChange} className="c-field">
-            <option value="NON_EMERGENCY">Non Emergency</option>
-            <option value="EMERGENCY">Emergency</option>
-          </select>
+        <input
+          name="location"
+          value={form.location}
+          onChange={handleChange}
+          placeholder="Location"
+          className="c-field h-12 px-4 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)]"
+        />
 
-          <input name="location" value={form.location} onChange={handleChange} placeholder="Location" className="c-field" />
-          <input name="latitude" value={form.latitude} onChange={handleChange} placeholder="Latitude" className="c-field" />
-          <input name="longitude" value={form.longitude} onChange={handleChange} placeholder="Longitude" className="c-field" />
+        <input
+          name="latitude"
+          value={form.latitude}
+          onChange={handleChange}
+          placeholder="Latitude ex:22.32"
+          className="c-field h-12 px-4 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)]"
+        />
 
-          <div className="c-upload col-span-2">
-            <input
-              id="imageUpload"
-              type="file"
-              multiple
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => e.target.files && handleImages(e.target.files)}
-            />
+        <input
+          name="longitude"
+          value={form.longitude}
+          onChange={handleChange}
+          placeholder="Longitude ex:22.30"
+          className="c-field h-12 px-4 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)]"
+        />
 
-            <label htmlFor="imageUpload" className="cursor-pointer block text-center p-5 border border-dashed rounded-[var(--radius-md)]">
-              Upload Images
-            </label>
+     <div className="c-upload w-full md:col-span-2 space-y-4">
 
-            <div className="grid grid-cols-3 gap-3 mt-3">
+          <input
+            id="imageUpload"
+            type="file"
+            multiple
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => e.target.files && handleImages(e.target.files)}
+          />
+
+          <label
+            htmlFor="imageUpload"
+            className="flex flex-col items-center justify-center gap-2 h-32 border border-dashed border-[var(--border-subtle)] rounded-[var(--radius-md)] cursor-pointer hover:border-[var(--accent-core)] hover:bg-[var(--bg-elevated)] transition-all"
+          >
+            <span className="text-sm text-[var(--text-secondary)]">
+              Click to upload images
+            </span>
+            <span className="text-xs text-[var(--text-muted)]">
+              Max {MAX_IMAGES} images • JPG, PNG
+            </span>
+          </label>
+
+          {form.images.length > 0 && (
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
               {form.images.map((img, i) => (
                 <div key={i} className="relative group">
-                  <img src={URL.createObjectURL(img)} className="h-24 w-full object-cover rounded" />
-                  <button onClick={() => removeImage(i)}
-                    className="absolute top-1 right-1 bg-black/70 text-white w-6 h-6 rounded-full text-xs">
+                  <img
+                    src={URL.createObjectURL(img)}
+                    className="h-24 w-full object-cover rounded-[12px]"
+                  />
+                  <button
+                    onClick={() => removeImage(i)}
+                    className="absolute cursor-pointer top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/70 text-white text-xs opacity-100 md:opacity-0 md:group-hover:opacity-100 transition"
+                  >
                     ✕
                   </button>
                 </div>
               ))}
             </div>
-          </div>
-
+          )}
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="c-submit btn-root btn-primary w-full"
-        >
-          {loading ? "Submitting..." : "Submit Complaint"}
-        </button>
-
       </div>
+
+   <Button
+  onClick={handleSubmit}
+  loading={loading}
+  disabled={loading}
+  className="c-submit w-full h-12 text-[15px] font-medium rounded-[var(--radius-md)] mt-2"
+>
+  Submit Complaint
+</Button>
+
     </div>
-  );
+  </div>
+);
 };
 
 export default ComplaintPage;

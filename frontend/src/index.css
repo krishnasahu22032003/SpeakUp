@@ -57,6 +57,10 @@ html {
   scroll-behavior: smooth;
 }
 
+html, body {
+  background: #070B14; /* your dark base */
+}
+
 body {
   font-family: "Inter", sans-serif;
   font-weight: 450;
@@ -449,4 +453,13 @@ small { font-size: 13px; }
 
 .theme-toggle:active .icon-wrapper {
   transform: rotate(180deg) scale(0.9);
+}
+
+.c-heading,
+.c-sub,
+.c-field,
+.c-upload,
+.c-submit {
+  opacity: 0;
+  transform: translateY(10px);
 }

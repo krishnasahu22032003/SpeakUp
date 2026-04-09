@@ -4,14 +4,13 @@ import { UserAuthMiddleware } from "../middlewares/userAuthMiddleware.js";
 import { AdminMiddleware } from "../middlewares/AdminMiddleWare.js";
 
 const ComplaintRouter = express.Router();
-ComplaintRouter.use(UserAuthMiddleware);
 
-ComplaintRouter.post("/create" , CreateComplaint);  
-ComplaintRouter.get("/user-complaints" ,  GetUserComplaint);  
-ComplaintRouter.get("/admin-complaints", AdminMiddleware ,GetAdminComplaint);  
-ComplaintRouter.delete("/delete/:id" ,  AdminMiddleware ,DeleteComplaint);  
-ComplaintRouter.patch("/admin/update/:id" ,AdminMiddleware,  AdminUpdateComplaint);  
-ComplaintRouter.patch("/user/update/:id" , UserAuthMiddleware, UserUpdateComplaint);  
+ComplaintRouter.post("/create", CreateComplaint);
+ComplaintRouter.get("/user-complaints", UserAuthMiddleware, GetUserComplaint);
+ComplaintRouter.get("/admin-complaints", UserAuthMiddleware, AdminMiddleware, GetAdminComplaint);
+ComplaintRouter.delete("/delete/:id", UserAuthMiddleware, AdminMiddleware, DeleteComplaint);
+ComplaintRouter.patch("/admin/update/:id", UserAuthMiddleware, AdminMiddleware, AdminUpdateComplaint);
+ComplaintRouter.patch("/user/update/:id", UserAuthMiddleware, UserUpdateComplaint);
 
 
-export default ComplaintRouter ; 
+export default ComplaintRouter; 

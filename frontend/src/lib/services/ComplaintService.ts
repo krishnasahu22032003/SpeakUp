@@ -12,7 +12,7 @@ type CreateComplaintPayload = {
 
 export async function CreateComplaint(data: CreateComplaintPayload) {
   return ComplaintAPI<{ success: boolean; message: string; data: any }>(
-    "/create",
+    "create",
     {
       method: "POST",
       body: JSON.stringify(data),
