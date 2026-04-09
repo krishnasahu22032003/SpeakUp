@@ -1,56 +1,101 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../../ThemeContext";
-import { Sun, Moon, Menu, X } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
+import gsap from "gsap";
+
+const quotes = [
+    "Every voice deserves to be heard.",
+    "Silence hides problems. SpeakUp reveals them.",
+    "Your report can create real change.",
+    "Small voices. Big impact.",
+];
 
 export default function ComplaintHeader() {
-   
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
+    const [scrolled, setScrolled] = useState(false);
+    const { theme, toggleTheme } = useTheme();
+    const [index, setIndex] = useState(0);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setIndex((prev) => (prev + 1) % quotes.length)
+        }, 2000);
+        return () => clearInterval(interval);
+    }, [])
 
-  return (
-    <>
-      <header className={`header ${scrolled ? "header-scrolled" : ""}`}>
-        <div className="header-inner">
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
 
-          <div className="logo">
-            <a href="/" className="-mr-2"><img src="/logo.png" alt="SpeakUp Logo" /></a>
-            <span>SpeakUp</span>
-          </div>
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
-          <div className="actions">
+    const quoteRef = useRef(null);
 
-            <button className="theme-toggle" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-            </button>
-          </div>
-        </div>
-      </header>
+    useEffect(() => {
+        gsap.fromTo(
+            quoteRef.current,
+            { opacity: 0, y: 10 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+        );
+    }, [index]);
+    return (
+        <>
+            <header className={`header ${scrolled ? "header-scrolled" : ""}`}>
+                <div className="header-inner">
 
-      <style>{`
-        .header {
-          position: fixed;
-          top: 0;
-          width: 100%;
-          z-index: 100;
-          transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
-        }
+                    <div className="logo">
+                        <a href="/" className="-mr-2"><img src="/logo.png" alt="SpeakUp Logo" /></a>
+                        <span>SpeakUp</span>
+                    </div>
 
-        .header-scrolled {
-          background: transparent;
-          backdrop-filter: blur(20px);
-          border-bottom:none
-          box-shadow: var(--shadow-soft);
-        }
+                    <div className="quote" ref={quoteRef}>
+                        {quotes[index]}
+                    </div>
+
+                    <div className="actions">
+
+                        <button className="theme-toggle" onClick={toggleTheme}>
+                            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <style>{`
+            .quote {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: var(--text-muted);
+  pointer-events: none;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+  .quote {
+    display: none;
+  }
+}
+    .header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+  background: rgba(7, 11, 20, 0.4); /* 👈 base fill */
+  backdrop-filter: blur(16px);
+}
+
+.header-scrolled {
+  background: rgba(7, 11, 20, 0.75); /* 👈 stronger fill */
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-soft);
+}
 
         .header-inner {
           max-width: 1180px;
@@ -134,93 +179,16 @@ export default function ComplaintHeader() {
           cursor: pointer;
         }
 
-     .mobile-menu {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  z-index: 200;
-
-  padding: 90px 20px 20px;
-
-  background: rgba(10, 15, 28, 0.95);
-  backdrop-filter: blur(20px);
-
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-
-  animation: slideDown 0.3s ease;
-}
   .mobile-header {
   position: absolute;
   top: 20px;
   right: 20px;
 }
 
-.close-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 1px solid var(--border-subtle);
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background: var(--bg-glass);
-  backdrop-filter: blur(12px);
-
-  color: var(--text-primary);
-  cursor: pointer;
-
-  transition: all 0.3s ease;
-}
-
 .close-btn:hover {
   transform: scale(1.1);
   box-shadow: var(--shadow-soft);
 }
-
-/* links section */
-.mobile-links {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  margin-top: 20px;
-}
-
-.mobile-links a {
-  font-size: 18px;
-  color: var(--text-primary);
-  text-decoration: none;
-}
-
-/* buttons section */
-.mobile-actions {
-  margin-top: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-        .mobile-menu a {
-          text-decoration: none;
-          color: var(--text-primary);
-          font-size: 16px;
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
 
         @media (max-width: 900px) {
           .nav {
@@ -236,6 +204,6 @@ export default function ComplaintHeader() {
           }
         }
       `}</style>
-    </>
-  );
+        </>
+    );
 }
