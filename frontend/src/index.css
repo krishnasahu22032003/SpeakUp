@@ -463,3 +463,12 @@ small { font-size: 13px; }
   opacity: 0;
   transform: translateY(10px);
 }
+
+.d-card,
+.d-title,
+.d-sub,
+.d-badge,
+.d-cta {
+  opacity: 0;
+  transform: translateY(20px);
+}

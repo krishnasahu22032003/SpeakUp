@@ -100,7 +100,7 @@ export default function Header() {
         .header-scrolled {
           background: transparent;
           backdrop-filter: blur(20px);
-          border-bottom: 1px solid var(--border-subtle);
+          border-bottom:none
           box-shadow: var(--shadow-soft);
         }
 
