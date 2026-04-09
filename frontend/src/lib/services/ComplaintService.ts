@@ -7,7 +7,7 @@ type CreateComplaintPayload = {
   longitude?: number;
   latitude?: number;
   type: "EMERGENCY" | "NON_EMERGENCY";
-  image?: string;
+  image?: string[];
 };
 
 export async function CreateComplaint(data: CreateComplaintPayload) {

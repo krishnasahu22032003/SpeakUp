@@ -2,11 +2,7 @@ import { z } from "zod";
 
 export const CreateComplaintSchema = z
   .object({
-    complaintId: z
-      .string()
-      .min(3, "Complaint ID too short")
-      .max(50, "Complaint ID too long")
-      .regex(/^[a-zA-Z0-9-_]+$/, "Only alphanumeric, - and _ allowed"),
+   complaintId: z.string().optional(),
 
     title: z
       .string()
@@ -19,12 +15,7 @@ export const CreateComplaintSchema = z
       .min(10, "Description too short")
       .max(2000, "Description too long")
       .trim(),
-
-    image: z
-      .string()
-      .url("Invalid image URL")
-      .max(500)
-      .optional(),
+image: z.array(z.string().url()).optional() ,
 
     type: z.enum(["EMERGENCY", "NON_EMERGENCY"]),
 
@@ -108,10 +99,7 @@ export const UserUpdateComplaintSchema = z.object({
     .max(180, "Invalid longitude")
     .optional(),
 
-  image: z
-    .string()
-    .url("Image must be a valid URL")
-    .optional(),
+  image: z.array(z.string().url()).optional(),
 
 })
 .strict()

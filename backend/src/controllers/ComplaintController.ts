@@ -19,20 +19,22 @@ export async function CreateComplaint(req: Request, res: Response) {
 
     try {
 
-        const Complaint = await prisma.complaint.create({
-            data: {
-                title,
-                description,
-                ...(req.user && { userId: req.user.id }),
-                type,
-                ...(latitude !== undefined && { latitude }),
-                ...(longitude !== undefined && { longitude }),
-                ...(image !== undefined && { image }),
-                ...(location !== undefined && { location }),
-                complaintId: uuidv4()
+const Complaint = await prisma.complaint.create({
+  data: {
+    title,
+    description,
+    type,
 
-            }
-        });
+    ...(req.user ? { userId: req.user.id } : {}),
+
+    ...(latitude !== undefined ? { latitude } : {}),
+    ...(longitude !== undefined ? { longitude } : {}),
+    ...(image !== undefined ? { image } : {}),
+    ...(location !== undefined ? { location } : {}),
+
+    complaintId: uuidv4(),
+  },
+});
         if (!Complaint) {
             return res.status(400).json({
                 success: false,

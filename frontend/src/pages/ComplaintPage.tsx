@@ -1,6 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { compressImage } from "../utils/compressImage";
+import { uploadToCloudinary } from "../utils/uploadToCloudinary";
+import { CreateComplaint } from "../lib/services/ComplaintService";
 import gsap from "gsap";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 type FormState = {
   title: string;
@@ -12,8 +16,11 @@ type FormState = {
   images: File[];
 };
 
+const MAX_IMAGES = 5;
+
 const ComplaintPage = () => {
   const containerRef = useRef(null);
+  const navigate = useNavigate();
 
   const [form, setForm] = useState<FormState>({
     title: "",
@@ -25,18 +32,15 @@ const ComplaintPage = () => {
     images: [],
   });
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
 
       tl.from(".c-heading", { y: 40, opacity: 0, duration: 1 })
         .from(".c-sub", { y: 30, opacity: 0, duration: 1 }, "-=0.6")
-        .from(".c-field", {
-          y: 30,
-          opacity: 0,
-          duration: 0.8,
-          stagger: 0.08,
-        }, "-=0.6")
+        .from(".c-field", { y: 30, opacity: 0, duration: 0.8, stagger: 0.08 }, "-=0.6")
         .from(".c-upload", { y: 30, opacity: 0, duration: 0.8 }, "-=0.5")
         .from(".c-submit", { y: 20, opacity: 0, duration: 0.8 }, "-=0.5");
 
@@ -62,18 +66,26 @@ const ComplaintPage = () => {
   const handleImages = async (files: FileList) => {
     const fileArray = Array.from(files) as File[];
 
-    const compressedImages = await Promise.all(
-      fileArray.map((file) => compressImage(file))
-    );
+    if (form.images.length + fileArray.length > MAX_IMAGES) {
+      toast.error(`Max ${MAX_IMAGES} images allowed`);
+      return;
+    }
 
-    const uniqueImages = compressedImages.filter(
-      (newImg) =>
-        !form.images.some((img) => img.name === newImg.name)
+    const validFiles = fileArray.filter((file) => {
+      if (!file.type.startsWith("image/")) {
+        toast.error("Only image files allowed");
+        return false;
+      }
+      return true;
+    });
+
+    const compressedImages = await Promise.all(
+      validFiles.map((file) => compressImage(file))
     );
 
     setForm((prev) => ({
       ...prev,
-      images: [...prev.images, ...uniqueImages],
+      images: [...prev.images, ...compressedImages],
     }));
   };
 
@@ -84,11 +96,60 @@ const ComplaintPage = () => {
     }));
   };
 
+  const uploadImages = async (files: File[]) => {
+    return Promise.all(files.map((file) => uploadToCloudinary(file)));
+  };
+
+  const handleSubmit = async () => {
+    if (!form.title || !form.description) {
+      toast.error("Title and Description are required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const imageUrls = await uploadImages(form.images);
+
+      const payload = {
+        title: form.title,
+        description: form.description,
+        type: form.type,
+        location: form.location || undefined,
+        latitude: form.latitude ? Number(form.latitude) : undefined,
+        longitude: form.longitude ? Number(form.longitude) : undefined,
+        image: imageUrls, // send array (backend should support)
+      };
+
+      await CreateComplaint(payload);
+
+      toast.success("Complaint submitted successfully 🎉");
+
+      setForm({
+        title: "",
+        description: "",
+        type: "NON_EMERGENCY",
+        location: "",
+        latitude: "",
+        longitude: "",
+        images: [],
+      });
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
+
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div
-      ref={containerRef}
-      className="min-h-screen px-4 py-24 flex items-center justify-center relative overflow-hidden"
-    >
+    <div ref={containerRef} className="min-h-screen px-4 py-24 flex items-center justify-center relative overflow-hidden">
+
       <div className="absolute inset-0 -z-10 bg-[var(--gradient-mesh)] blur-[120px] opacity-60" />
 
       <div className="c-glow absolute top-[40%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-[var(--accent-core)] opacity-20 blur-[140px] rounded-full" />
@@ -96,148 +157,68 @@ const ComplaintPage = () => {
       <div className="w-full max-w-3xl bg-[var(--bg-glass)] backdrop-blur-2xl border border-[var(--border-subtle)] rounded-[var(--radius-lg)] shadow-[var(--shadow-strong)] p-6 md:p-9 space-y-6">
 
         <div className="text-center space-y-2">
-          <h1 className="c-heading text-[30px] md:text-[36px] font-semibold tracking-tight text-[var(--text-primary)]">
-            Raise a {" "}
-            <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),var(--accent-aurora))]">
-              Complaint
-            </span>
+          <h1 className="c-heading text-[30px] md:text-[36px] font-semibold">
+            Raise a <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),var(--accent-aurora))]">Complaint</span>
           </h1>
-          <p className="c-sub text-[14px] md:text-[15px] text-[var(--text-secondary)] max-w-lg mx-auto">
-            Share your concern clearly and securely. We make sure it reaches the right hands.
+          <p className="c-sub text-[var(--text-secondary)]">
+            Share your concern clearly and securely.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <div className="c-field col-span-2">
-            <label className="text-xs text-[var(--text-muted)]">Title</label>
-            <input
-              name="title"
-              value={form.title}
-              onChange={handleChange}
-              placeholder="Short issue title"
-              className="mt-1 w-full px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-core)] focus:shadow-[var(--glow-core)] outline-none transition-all"
-            />
-          </div>
+          <input name="title" value={form.title} onChange={handleChange} placeholder="Title"
+            className="c-field px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] col-span-2" />
 
-          <div className="c-field col-span-2">
-            <label className="text-xs text-[var(--text-muted)]">Description</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={4}
-              placeholder="Explain the issue"
-              className="mt-1 w-full px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-core)] focus:shadow-[var(--glow-core)] outline-none resize-none transition-all"
-            />
-          </div>
+          <textarea name="description" value={form.description} onChange={handleChange}
+            className="c-field px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] col-span-2" />
 
-          <div className="c-field">
-            <label className="text-xs text-[var(--text-muted)]">Type</label>
-            <select
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-              className="mt-1 w-full px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] focus:border-[var(--accent-core)] outline-none"
-            >
-              <option value="NON_EMERGENCY">Non Emergency</option>
-              <option value="EMERGENCY">Emergency</option>
-            </select>
-          </div>
+          <select name="type" value={form.type} onChange={handleChange} className="c-field">
+            <option value="NON_EMERGENCY">Non Emergency</option>
+            <option value="EMERGENCY">Emergency</option>
+          </select>
 
-          <div className="c-field">
-            <label className="text-xs text-[var(--text-muted)]">Location</label>
-            <input
-              name="location"
-              value={form.location}
-              onChange={handleChange}
-              placeholder="City or area"
-              className="mt-1 w-full px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-core)] focus:shadow-[var(--glow-core)] outline-none transition-all"
-            />
-          </div>
-
-          <div className="c-field">
-            <label className="text-xs text-[var(--text-muted)]">Latitude</label>
-            <input
-              name="latitude"
-              value={form.latitude}
-              onChange={handleChange}
-              placeholder="28.6139"
-              className="mt-1 w-full px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-core)] focus:shadow-[var(--glow-core)] outline-none transition-all"
-            />
-          </div>
-
-          <div className="c-field">
-            <label className="text-xs text-[var(--text-muted)]">Longitude</label>
-            <input
-              name="longitude"
-              value={form.longitude}
-              onChange={handleChange}
-              placeholder="77.2090"
-              className="mt-1 w-full px-4 py-2.5 rounded-[var(--radius-md)] bg-[var(--bg-elevated)] border border-[var(--border-subtle)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent-core)] focus:shadow-[var(--glow-core)] outline-none transition-all"
-            />
-          </div>
+          <input name="location" value={form.location} onChange={handleChange} placeholder="Location" className="c-field" />
+          <input name="latitude" value={form.latitude} onChange={handleChange} placeholder="Latitude" className="c-field" />
+          <input name="longitude" value={form.longitude} onChange={handleChange} placeholder="Longitude" className="c-field" />
 
           <div className="c-upload col-span-2">
-            <label className="text-xs text-[var(--text-muted)]">Upload Images</label>
-
             <input
               id="imageUpload"
               type="file"
               multiple
               accept="image/*"
               className="hidden"
-              onChange={(e) => {
-                if (e.target.files) handleImages(e.target.files);
-              }}
+              onChange={(e) => e.target.files && handleImages(e.target.files)}
             />
 
-            <label
-              htmlFor="imageUpload"
-              className="mt-1 w-full border border-dashed border-[var(--border-subtle)] rounded-[var(--radius-md)] p-5 flex flex-col items-center justify-center gap-2 bg-[var(--bg-elevated)] hover:border-[var(--accent-core)] transition-all cursor-pointer"
-            >
-              <span className="text-sm text-[var(--text-secondary)]">
-                Click to upload multiple images
-              </span>
+            <label htmlFor="imageUpload" className="cursor-pointer block text-center p-5 border border-dashed rounded-[var(--radius-md)]">
+              Upload Images
             </label>
 
-            {form.images.length > 0 && (
-              <div className="grid grid-cols-3 gap-3 mt-3">
-                {form.images.map((img, i) => {
-                  const url = URL.createObjectURL(img);
-                  return (
-                    <div key={i} className="relative group">
-                      <img
-                        src={url}
-                        onLoad={(e) =>
-                          URL.revokeObjectURL(
-                            (e.target as HTMLImageElement).src
-                          )
-                        }
-                        className="w-full h-24 object-cover rounded-[12px]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => removeImage(i)}
-                        className="absolute cursor-pointer top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/70 text-white text-xs opacity-100 md:opacity-0 md:group-hover:opacity-100 transition"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+            <div className="grid grid-cols-3 gap-3 mt-3">
+              {form.images.map((img, i) => (
+                <div key={i} className="relative group">
+                  <img src={URL.createObjectURL(img)} className="h-24 w-full object-cover rounded" />
+                  <button onClick={() => removeImage(i)}
+                    className="absolute top-1 right-1 bg-black/70 text-white w-6 h-6 rounded-full text-xs">
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
+
         </div>
 
-        <div className="c-submit flex justify-center pt-2">
-          <button className="btn-root btn-primary">
-            <span className="btn-content">Submit Complaint</span>
-            <span className="btn-glow" />
-            <span className="btn-highlight" />
-          </button>
-        </div>
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="c-submit btn-root btn-primary w-full"
+        >
+          {loading ? "Submitting..." : "Submit Complaint"}
+        </button>
+
       </div>
     </div>
   );
