@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
-import { replace, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { UserSignIn } from "../lib/services/AuthService";
 import { toast } from "sonner";
 import { CheckUserStore } from "../store/useAuthStore";

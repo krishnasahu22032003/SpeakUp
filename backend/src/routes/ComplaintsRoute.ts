@@ -11,7 +11,7 @@ ComplaintRouter.get("/user-complaints" ,  GetUserComplaint);
 ComplaintRouter.get("/admin-complaints", AdminMiddleware ,GetAdminComplaint);  
 ComplaintRouter.delete("/delete/:id" ,  AdminMiddleware ,DeleteComplaint);  
 ComplaintRouter.patch("/admin/update/:id" ,AdminMiddleware,  AdminUpdateComplaint);  
-ComplaintRouter.patch("/user/update/:id" ,  UserUpdateComplaint);  
+ComplaintRouter.patch("/user/update/:id" , UserAuthMiddleware, UserUpdateComplaint);  
 
 
 export default ComplaintRouter ; 
