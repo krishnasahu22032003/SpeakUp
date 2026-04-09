@@ -17,13 +17,6 @@ export default function ComplaintHeader() {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setIndex((prev) => (prev + 1) % quotes.length)
-        }, 2000);
-        return () => clearInterval(interval);
-    }, [])
-
-    useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 20);
         };
@@ -33,14 +26,39 @@ export default function ComplaintHeader() {
     }, []);
 
     const quoteRef = useRef(null);
+useEffect(() => {
+  const el = quoteRef.current;
 
-    useEffect(() => {
-        gsap.fromTo(
-            quoteRef.current,
-            { opacity: 0, y: 10 },
-            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
-        );
-    }, [index]);
+  const interval = setInterval(() => {
+    const tl = gsap.timeline();
+
+    tl.to(el, {
+      opacity: 0,
+      y: -12,
+      filter: "blur(8px)",
+      duration: 0.5,
+      ease: "power2.in",
+    }).call(() => {
+      setIndex((prev) => (prev + 1) % quotes.length);
+    }).fromTo(
+      el,
+      {
+        opacity: 0,
+        y: 20,
+        filter: "blur(8px)",
+      },
+      {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: 0.8,
+        ease: "power3.out",
+      }
+    );
+  }, 4000);
+
+  return () => clearInterval(interval);
+}, []);
     return (
         <>
             <header className={`header ${scrolled ? "header-scrolled" : ""}`}>
@@ -82,20 +100,18 @@ export default function ComplaintHeader() {
   }
 }
     .header {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 100;
-  transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
-  background: rgba(7, 11, 20, 0.4); /* 👈 base fill */
-  backdrop-filter: blur(16px);
-}
+          position: fixed;
+          top: 0;
+          width: 100%;
+          z-index: 100;
+          transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+        }
 
-.header-scrolled {
-  background: rgba(7, 11, 20, 0.75); /* 👈 stronger fill */
-  backdrop-filter: blur(20px);
-  box-shadow: var(--shadow-soft);
-}
+        .header-scrolled {
+          background: transparent;
+          backdrop-filter: blur(20px);
+          box-shadow: var(--shadow-soft);
+        }
 
         .header-inner {
           max-width: 1180px;
