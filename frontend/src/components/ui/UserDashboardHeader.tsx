@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { UserSignOut } from "../../lib/services/AuthService";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import UpdateProfileModal from "./UpdateProfileModal";
 
 const quotes = [
   "Every voice deserves to be heard.",
@@ -136,7 +137,7 @@ export default function UserDashboardHeader() {
           </div>
         </div>
       </header>
-{ismodalOpen && </>}
+{ismodalOpen && (<UpdateProfileModal onClose={()=>{setismodalOpen(false)}}/>)}
       <style>{`
         .quote {
           position: absolute;
