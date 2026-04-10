@@ -3,11 +3,18 @@ import API from "../../api/UserAPI";
 interface UserDetails {
 
     username?: string,
-    email: string,
-    password: string,
+    email?: string,
+    password?: string,
 
 }
 
+interface UpdateUserResponse {
+
+    id :number ,
+    username:string ,
+    email:string 
+
+}
 
 export function UserSignUp(User: UserDetails) {
 
@@ -40,5 +47,16 @@ export async function UserSignOut(){
     });
 
     return res.message;
+
+};
+
+export async function UpdateUserDetails(UserUpdateDeails: UserDetails){
+
+const res = await API<{success:boolean , message:string , user:UpdateUserResponse}>("update",{
+    method:"PATCH",
+    body:JSON.stringify(UpdateUserDetails)
+})
+
+return res.user ; 
 
 }
