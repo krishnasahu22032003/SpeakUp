@@ -7,6 +7,7 @@ import {
   Clock,
   Activity,
 } from "lucide-react";
+import UserDashboardHeader from "../components/ui/UserDashboardHeader";
 
 type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
 
@@ -85,7 +86,9 @@ const UserDashboardPage = () => {
   };
 
   return (
-    <section
+  <>
+  <UserDashboardHeader/>
+      <section
       ref={containerRef}
       className="relative min-h-screen px-4 py-12 md:py-16 bg-[var(--bg-base)] overflow-hidden"
     >
@@ -211,6 +214,8 @@ const UserDashboardPage = () => {
 
       </div>
     </section>
+  </>
+
   );
 };
 
