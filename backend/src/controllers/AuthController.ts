@@ -151,7 +151,7 @@ export function UserSignOut(req: Request, res: Response) {
       sameSite: ENV.NODE_ENV === "production" ? "none" : "lax",
     })
     return res.status(200).json({
-      success: false,
+      success: true,
       message: "User signed out"
     })
   } catch (error) {

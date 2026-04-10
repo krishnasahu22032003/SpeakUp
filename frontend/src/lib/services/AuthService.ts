@@ -31,4 +31,14 @@ export async function CheckUser() {
     });
 
     return res.data;
+};
+
+export async function UserSignOut(){
+
+    const  res = await API<{success:boolean , message:string }>("logout",{
+        method:"POST"
+    });
+
+    return res.message;
+
 }

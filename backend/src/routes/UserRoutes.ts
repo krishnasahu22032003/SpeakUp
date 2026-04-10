@@ -11,3 +11,5 @@ UserRouter.patch('/update', UserAuthMiddleware, UpdateUserDetails);
 UserRouter.get('/me', UserAuthMiddleware, getUserDetails);
 
 export default UserRouter;
+
+
