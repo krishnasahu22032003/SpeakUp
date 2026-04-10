@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import Button from "../components/ui/Button";
 import {
@@ -8,6 +8,8 @@ import {
   Activity,
 } from "lucide-react";
 import UserDashboardHeader from "../components/ui/UserDashboardHeader";
+import { useTransform } from "framer-motion";
+import ComplaintModal from "../components/ui/DashboardComplaintModal";
 
 type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
 
@@ -42,7 +44,8 @@ const mockComplaints = [
 
 const UserDashboardPage = () => {
   const containerRef = useRef(null);
-
+  const [ismodalOpen , setismodalOpen]=useState<boolean>(false);
+  const [isopen , setisOpen ]= useState<boolean>(false);
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({
@@ -129,7 +132,7 @@ const UserDashboardPage = () => {
           </div>
 
           <div className="d-cta">
-            <Button className="h-12 px-6 text-[15px]">
+            <Button className="h-12 px-6 text-[15px]" onClick={()=>{setismodalOpen(true) ; setisOpen(false)}}>
               Create Complaint
             </Button>
           </div>
@@ -214,6 +217,7 @@ const UserDashboardPage = () => {
 
       </div>
     </section>
+    {ismodalOpen && <ComplaintModal onClose={()=>{setismodalOpen(false)}}/>}
   </>
 
   );

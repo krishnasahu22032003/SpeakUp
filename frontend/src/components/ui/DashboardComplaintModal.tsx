@@ -10,21 +10,32 @@ import Button from "./Button";
 type Props = {
   onClose: () => void;
 };
+type ComplaintType = "EMERGENCY" | "NON_EMERGENCY";
 
+type FormState = {
+  title: string;
+  description: string;
+  type: ComplaintType;
+  location: string;
+  latitude: string;
+  longitude: string;
+  images: File[];
+};
 const MAX_IMAGES = 5;
 
 export default function ComplaintModal({ onClose }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    type: "NON_EMERGENCY",
-    location: "",
-    latitude: "",
-    longitude: "",
-    images: [] as File[],
-  });
+ 
+const [form, setForm] = useState<FormState>({
+  title: "",
+  description: "",
+  type: "NON_EMERGENCY",
+  location: "",
+  latitude: "",
+  longitude: "",
+  images: [],
+});
 
   const [loading, setLoading] = useState(false);
 
@@ -38,10 +49,10 @@ export default function ComplaintModal({ onClose }: Props) {
     }
 
     document.body.style.overflow = "hidden";
-    return () => (document.body.style.overflow = "auto");
+    return () => {(document.body.style.overflow = "auto")}
   }, []);
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
