@@ -19,6 +19,7 @@ export default function UserDashboardHeader() {
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
   const [loading , setLoading]= useState<boolean>(false);
+  const [ismodalOpen , setismodalOpen] =  useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const quoteRef = useRef(null);
   const navigate = useNavigate();
@@ -122,7 +123,7 @@ export default function UserDashboardHeader() {
               </button>
 
               <div className={`dropdown ${open ? "show" : ""}`}>
-                <button className="dropdown-item">
+                <button className="dropdown-item" onClick={()=>{setismodalOpen(true); setOpen(false)}}>
                   <Settings size={16} />
                   <span>Update Details</span>
                 </button>
@@ -135,7 +136,7 @@ export default function UserDashboardHeader() {
           </div>
         </div>
       </header>
-
+{ismodalOpen && </>}
       <style>{`
         .quote {
           position: absolute;
