@@ -166,7 +166,7 @@ export default function DashboardComplaintModal({ onClose }: Props) {
 
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition cursor-pointer"
+            className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition cursor-pointer "
           >
             <X size={18} />
           </button>
@@ -257,7 +257,7 @@ export default function DashboardComplaintModal({ onClose }: Props) {
                       onClick={() => removeImage(i)}
                       className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/70 text-white text-xs cursor-pointer"
                     >
-                      ✕
+                    <X className="w-5 h-5 cursor-pointer" />
                     </button>
                   </div>
                 ))}
