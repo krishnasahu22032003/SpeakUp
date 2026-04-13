@@ -25,7 +25,11 @@ type Complaint = {
 export async function CreateComplaint(data: CreateComplaintPayload) {
   return ComplaintAPI<{ success: boolean; message: string; data: any }>(
     "create",
+    
     {
+      headers: {
+            "Content-Type": "application/json"
+        },
       method: "POST",
       body: JSON.stringify(data),
     }

@@ -8,7 +8,6 @@ import {
   Activity,
 } from "lucide-react";
 import UserDashboardHeader from "../components/ui/UserDashboardHeader";
-import { useTransform } from "framer-motion";
 import ComplaintModal from "../components/ui/DashboardComplaintModal";
 
 type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
