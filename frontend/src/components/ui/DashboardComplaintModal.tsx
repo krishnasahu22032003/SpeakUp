@@ -157,7 +157,7 @@ const [form, setForm] = useState<FormState>({
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition"
           >
-            <X size={18} />
+           <X className="w-6 h-6 cursor-pointer" />
           </button>
         </div>
 
@@ -256,7 +256,7 @@ const [form, setForm] = useState<FormState>({
                       onClick={() => removeImage(i)}
                       className="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-black/70 text-white text-xs"
                     >
-                      ✕
+                     <X className="w-4 h-4 cursor-pointer" />
                     </button>
                   </div>
                 ))}

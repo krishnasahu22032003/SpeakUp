@@ -92,7 +92,7 @@ const UserDashboardPage = () => {
   <UserDashboardHeader/>
       <section
       ref={containerRef}
-      className="relative min-h-screen px-4 py-12 md:py-16 bg-[var(--bg-base)] overflow-hidden"
+      className="relative min-h-screen px-4 py-22 md:py-22 bg-[var(--bg-base)] overflow-hidden"
     >
       <div className="absolute inset-0 -z-10 bg-[var(--gradient-mesh)] blur-[140px] opacity-70" />
 
