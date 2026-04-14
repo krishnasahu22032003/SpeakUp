@@ -9,6 +9,7 @@ import Button from "./Button";
 
 type Props = {
   onClose: () => void;
+  onSuccess?: (complaint: any) => void;
 };
 type ComplaintType = "EMERGENCY" | "NON_EMERGENCY";
 
@@ -23,7 +24,7 @@ type FormState = {
 };
 const MAX_IMAGES = 5;
 
-export default function ComplaintModal({ onClose }: Props) {
+export default function ComplaintModal({ onClose , onSuccess }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
  
@@ -97,7 +98,7 @@ const [form, setForm] = useState<FormState>({
 
       const imageUrls = await uploadImages(form.images);
 
-      await CreateComplaint({
+     const res = await CreateComplaint({
         title: form.title,
         description: form.description,
         type: form.type,
@@ -106,7 +107,7 @@ const [form, setForm] = useState<FormState>({
         longitude: form.longitude ? Number(form.longitude) : undefined,
         image: imageUrls,
       });
-
+       onSuccess?.(res.data);
       toast.success("Complaint submitted 🎉");
       onClose();
     } catch (err: any) {

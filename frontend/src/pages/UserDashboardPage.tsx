@@ -69,6 +69,14 @@ const UserDashboardPage = () => {
     return () => ctx.revert();
   }, []);
 
+useEffect(() => {
+  gsap.fromTo(
+    ".d-card:first-child",
+    { scale: 0.9, opacity: 0 },
+    { scale: 1, opacity: 1, duration: 0.4 }
+  );
+}, [complaints]);
+
 const statusStyle = (status?: string) => {
   switch (status) {
     case "RESOLVED":
@@ -240,7 +248,14 @@ const statusStyle = (status?: string) => {
         </div>
       </section>
 
-      {ismodalOpen && <ComplaintModal onClose={() => setismodalOpen(false)} />}
+     {ismodalOpen && (
+  <ComplaintModal
+    onClose={() => setismodalOpen(false)}
+    onSuccess={(newComplaint) => {
+      setComplaints((prev) => [newComplaint, ...prev]);
+    }}
+  />
+)}
     </>
   );
 };
