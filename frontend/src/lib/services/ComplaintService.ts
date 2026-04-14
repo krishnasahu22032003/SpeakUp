@@ -36,12 +36,13 @@ export async function CreateComplaint(data: CreateComplaintPayload) {
   );
 };
 
-export async function GetUserComplaints(page = 1, limit = 10) {
-  return ComplaintAPI<{
+export async function GetUserComplaints(page = 1, limit = 6) {
+  const res = await ComplaintAPI<{
     success: boolean;
-    message: string;
-    data: Complaint[];
+    data: any[];
   }>(`user-complaints?page=${page}&limit=${limit}`, {
     method: "GET",
   });
+
+  return res.data;
 }

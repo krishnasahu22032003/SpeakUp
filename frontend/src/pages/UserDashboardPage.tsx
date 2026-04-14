@@ -9,41 +9,38 @@ import {
 } from "lucide-react";
 import UserDashboardHeader from "../components/ui/UserDashboardHeader";
 import ComplaintModal from "../components/ui/DashboardComplaintModal";
+import { GetUserComplaints } from "../lib/services/ComplaintService";
 
 type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
 
-const mockComplaints = [
-  {
-    id: "1",
-    title: "Road Damage near Sector 5",
-    description:
-      "Large potholes causing traffic disruption and safety issues.",
-    status: "PENDING",
-    location: "Sector 5, Noida",
-    latitude: "28.567",
-    longitude: "77.321",
-    image:
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70",
-    createdAt: "2 days ago",
-  },
-  {
-    id: "2",
-    title: "Streetlight Not Working",
-    description:
-      "Street completely dark at night leading to safety concerns.",
-    status: "IN_PROGRESS",
-    location: "MG Road",
-    latitude: "28.45",
-    longitude: "77.02",
-    image:
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
-    createdAt: "5 days ago",
-  },
-];
-
 const UserDashboardPage = () => {
   const containerRef = useRef(null);
-  const [ismodalOpen , setismodalOpen]=useState<boolean>(false);
+  const [ismodalOpen, setismodalOpen] = useState<boolean>(false);
+  const [complaints, setComplaints] = useState<any[]>([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        setLoading(true);
+
+        const res = await GetUserComplaints(page, 6);
+        const safeData = Array.isArray(res) ? res : [];
+
+        setComplaints(safeData);
+        setHasMore(safeData.length >= 6);
+      } catch (err) {
+        console.error(err);
+        setComplaints([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComplaints();
+  }, [page]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -67,24 +64,23 @@ const UserDashboardPage = () => {
         yoyo: true,
         ease: "sine.inOut",
       });
-
     }, containerRef);
 
     return () => ctx.revert();
   }, []);
 
-  const statusStyle = (status: Status) => {
-    switch (status) {
-      case "RESOLVED":
-        return "bg-[#00FF94]/90 text-black shadow-[0_0_20px_#00FF94]";
-      case "IN_PROGRESS":
-        return "bg-[#FFC857]/90 text-black shadow-[0_0_20px_#FFC857]";
-      case "DISMISSED":
-        return "bg-[#FF3B6B]/90 text-white shadow-[0_0_20px_#FF3B6B]";
-      default:
-        return "bg-[#00E5FF]/90 text-black shadow-[0_0_20px_#00E5FF]";
-    }
-  };
+const statusStyle = (status?: string) => {
+  switch (status) {
+    case "RESOLVED":
+      return "bg-emerald-500/90 text-white shadow-[0_0_18px_rgba(16,185,129,0.6)]";
+    case "IN_PROGRESS":
+      return "bg-sky-500/90 text-white shadow-[0_0_18px_rgba(14,165,233,0.6)]";
+    case "DISMISSED":
+      return "bg-rose-500/90 text-white shadow-[0_0_18px_rgba(244,63,94,0.6)]";
+    default:
+      return "bg-amber-400/90 text-black shadow-[0_0_18px_rgba(251,191,36,0.6)]";
+  }
+};
 
   return (
     <>
@@ -95,7 +91,6 @@ const UserDashboardPage = () => {
         className="relative min-h-screen px-4 py-20 bg-[var(--bg-base)] overflow-hidden"
       >
         <div className="absolute inset-0 -z-10 bg-[var(--gradient-mesh)] blur-[140px] opacity-70" />
-
         <div className="d-glow absolute top-[40%] left-1/2 -translate-x-1/2 w-[420px] h-[420px] bg-[var(--accent-core)] opacity-20 blur-[160px] rounded-full" />
 
         <div className="max-w-6xl mx-auto space-y-10">
@@ -134,73 +129,110 @@ const UserDashboardPage = () => {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
 
-            {mockComplaints.map((c) => (
-              <div
-                key={c.id}
-                className="d-card group relative overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_25px_60px_rgba(0,0,0,0.25)] dark:hover:shadow-[0_25px_60px_rgba(0,0,0,0.6)]"
-              >
-
-                <div className="relative h-40 overflow-hidden">
-
-                  <img
-                    src={c.image}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-[1deg]"
-                  />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent dark:from-black/70 dark:via-black/20" />
-
-                  <div className={`absolute top-3 right-3 text-[11px] px-3 py-1 rounded-full font-medium backdrop-blur-md ${statusStyle(c.status as Status)}`}>
-                    {c.status.replace("_", " ")}
-                  </div>
-
-                </div>
-
-                <div className="p-4 space-y-3">
-
-                  <h3 className="text-[16px] font-semibold text-[var(--text-primary)] transition-colors duration-300">
-                    {c.title}
-                  </h3>
-
-                  <p className="text-[var(--text-secondary)] text-xs leading-relaxed line-clamp-2">
-                    {c.description}
-                  </p>
-
-                  <div className="flex flex-col gap-2 text-[11px] text-[var(--text-muted)]">
-
-                    <div className="flex items-center gap-2 transition-colors duration-300">
-                      <MapPin className="w-3.5 h-3.5" />
-                      <span>{c.location}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 transition-colors duration-300">
-                      <Globe className="w-3.5 h-3.5" />
-                      <span>{c.latitude}, {c.longitude}</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 transition-colors duration-300">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>{c.createdAt}</span>
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none">
-                  <div className="absolute -top-20 -left-20 w-52 h-52 bg-[var(--accent-core)] blur-[120px] opacity-20" />
-                  <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#00E5FF] blur-[100px] opacity-10" />
-                </div>
-
+            {loading ? (
+              <div className="col-span-full flex justify-center py-20 text-[var(--text-secondary)]">
+                Loading complaints...
               </div>
-            ))}
+            ) : complaints.length === 0 ? (
+              <div className="col-span-full flex items-center justify-center py-20 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl">
+                <p className="text-[var(--text-secondary)] text-lg">
+                  No complaints yet
+                </p>
+              </div>
+            ) : (
+              complaints.map((c, i) => {
+                const imageSrc =
+                  Array.isArray(c.image) && c.image.length > 0
+                    ? c.image[0]
+                    : "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee";
+
+                return (
+             <div
+  key={c.id || i}
+  className="d-card group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl shadow-[var(--shadow-soft)] min-h-[270px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[var(--shadow-strong)]"
+>
+
+  <div className="relative h-44 w-full overflow-hidden">
+
+    <img
+      src={imageSrc}
+      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-[1deg]"
+    />
+
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+
+    <div className={`absolute top-3 right-3 z-20 text-[11px] px-3 py-1 rounded-full font-medium backdrop-blur-md transition-all duration-300 group-hover:scale-105 ${statusStyle(c.status)}`}>
+      {c.status ? c.status.replace("_", " ") : "UNKNOWN"}
+    </div>
+
+  </div>
+
+  <div className="p-4 flex flex-col gap-3 relative z-10">
+
+    <h3 className="text-[15px] md:text-[16px] font-semibold text-[var(--text-primary)] leading-snug tracking-tight">
+      {c.title || "No Title"}
+    </h3>
+
+    <p className="text-[12px] md:text-[13px] text-[var(--text-secondary)] leading-relaxed line-clamp-2">
+      {c.description || "No description available"}
+    </p>
+
+    <div className="flex flex-col gap-2 text-[11px] text-[var(--text-muted)]">
+
+      <div className="flex items-center gap-2 transition-colors duration-300 group-hover:text-[var(--text-secondary)]">
+        <MapPin className="w-3.5 h-3.5 opacity-80" />
+        <span>{c.location || "Unknown location"}</span>
+      </div>
+
+      <div className="flex items-center gap-2 transition-colors duration-300 group-hover:text-[var(--text-secondary)]">
+        <Globe className="w-3.5 h-3.5 opacity-80" />
+        <span>
+          {c.latitude?.toString() || "-"},{" "}
+          {c.longitude?.toString() || "-"}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2 transition-colors duration-300 group-hover:text-[var(--text-secondary)]">
+        <Clock className="w-3.5 h-3.5 opacity-80" />
+        <span>
+          {c.createdAt
+            ? new Date(c.createdAt).toLocaleDateString()
+            : "-"}
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none">
+    <div className="absolute -top-20 -left-20 w-52 h-52 bg-[var(--accent-core)] blur-[120px] opacity-20" />
+    <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#00E5FF] blur-[100px] opacity-10" />
+  </div>
+
+</div>
+                );
+              })
+            )}
 
           </div>
 
           <div className="flex justify-center gap-4 pt-6">
-            <Button variant="secondary" className="h-10 px-5 text-sm hover:scale-105 active:scale-95 transition">
+            <Button
+              variant="secondary"
+              className="h-10 px-5 text-sm hover:scale-105 active:scale-95 transition"
+              disabled={page === 1}
+              onClick={() => setPage((prev) => prev - 1)}
+            >
               Previous
             </Button>
-            <Button variant="secondary" className="h-10 px-5 text-sm hover:scale-105 active:scale-95 transition">
+
+            <Button
+              variant="secondary"
+              className="h-10 px-5 text-sm hover:scale-105 active:scale-95 transition"
+              disabled={!hasMore}
+              onClick={() => setPage((prev) => prev + 1)}
+            >
               Next
             </Button>
           </div>
@@ -208,7 +240,7 @@ const UserDashboardPage = () => {
         </div>
       </section>
 
-      {ismodalOpen && <ComplaintModal onClose={()=>setismodalOpen(false)} />}
+      {ismodalOpen && <ComplaintModal onClose={() => setismodalOpen(false)} />}
     </>
   );
 };
