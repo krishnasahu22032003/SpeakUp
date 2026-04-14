@@ -45,4 +45,16 @@ export async function GetUserComplaints(page = 1, limit = 6) {
   });
 
   return res.data;
-}
+};
+
+export async function UpdateUserComplaint(id: string, payload: any) {
+  const res = await ComplaintAPI<{
+    success: boolean;
+    data: any;
+  }>(`user/update/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+
+  return res.data;
+};

@@ -10,6 +10,7 @@ import Button from "./Button";
 type Props = {
   onClose: () => void;
   onSuccess?: (complaint: any) => void;
+    initialData?: any;
 };
 type ComplaintType = "EMERGENCY" | "NON_EMERGENCY";
 
@@ -24,7 +25,7 @@ type FormState = {
 };
 const MAX_IMAGES = 5;
 
-export default function ComplaintModal({ onClose , onSuccess }: Props) {
+export default function ComplaintModal({ onClose , onSuccess , initialData }: Props) {
   const modalRef = useRef<HTMLDivElement | null>(null);
 
  
@@ -52,6 +53,21 @@ const [form, setForm] = useState<FormState>({
     document.body.style.overflow = "hidden";
     return () => {(document.body.style.overflow = "auto")}
   }, []);
+
+  useEffect(() => {
+  if (initialData) {
+    setForm({
+      title: initialData.title || "",
+      description: initialData.description || "",
+      type: initialData.type || "NON_EMERGENCY",
+      location: initialData.location || "",
+      latitude: initialData.latitude?.toString() || "",
+      longitude: initialData.longitude?.toString() || "",
+      images: [],
+    });
+  }
+}, [initialData]);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -87,18 +103,44 @@ const [form, setForm] = useState<FormState>({
     return Promise.all(files.map((file) => uploadToCloudinary(file)));
   };
 
-  const handleSubmit = async () => {
-    if (!form.title || !form.description) {
-      toast.error("Title and Description are required");
-      return;
+const handleSubmit = async () => {
+  if (!form.title || !form.description) {
+    toast.error("Title and Description are required");
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    let imageUrls: string[] = [];
+
+    // ✅ Only upload images if user selected new ones
+    if (form.images.length > 0) {
+      imageUrls = await uploadImages(form.images);
     }
 
-    try {
-      setLoading(true);
+    let res;
 
-      const imageUrls = await uploadImages(form.images);
+    if (initialData) {
+      // 🔥 UPDATE FLOW (PATCH)
+      res = await Com(`user/update/${initialData.id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          title: form.title,
+          description: form.description,
+          type: form.type,
+          location: form.location || undefined,
+          latitude: form.latitude ? Number(form.latitude) : undefined,
+          longitude: form.longitude ? Number(form.longitude) : undefined,
+          ...(imageUrls.length > 0 && { image: imageUrls }),
+        }),
+      });
 
-     const res = await CreateComplaint({
+      toast.success("Complaint updated successfully ✨");
+
+    } else {
+      // 🔥 CREATE FLOW (your existing logic untouched)
+      res = await CreateComplaint({
         title: form.title,
         description: form.description,
         type: form.type,
@@ -107,16 +149,21 @@ const [form, setForm] = useState<FormState>({
         longitude: form.longitude ? Number(form.longitude) : undefined,
         image: imageUrls,
       });
-       onSuccess?.(res.data);
-      toast.success("Complaint submitted 🎉");
-      onClose();
-    } catch (err: any) {
-      toast.error(err.message || "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
 
+      toast.success("Complaint submitted 🎉");
+    }
+
+    // ✅ works for both create + update
+    onSuccess?.(res.data);
+
+    onClose();
+
+  } catch (err: any) {
+    toast.error(err.message || "Something went wrong");
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="fixed inset-0 z-[300] flex items-center justify-center px-3 sm:px-6">
       
