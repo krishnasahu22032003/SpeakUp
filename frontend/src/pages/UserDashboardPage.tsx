@@ -149,29 +149,38 @@ const statusStyle = (status?: string) => {
               </div>
             ) : (
               complaints.map((c, i) => {
-                const imageSrc =
-                  Array.isArray(c.image) && c.image.length > 0
-                    ? c.image[0]
-                    : "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee";
-
+               
                 return (
              <div
   key={c.id || i}
   className="d-card group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl shadow-[var(--shadow-soft)] min-h-[270px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[var(--shadow-strong)]"
 >
 
-  <div className="relative h-44 w-full overflow-hidden">
+  <div className="relative h-44 w-full overflow-hidden flex items-center justify-center">
 
+{Array.isArray(c.image) && c.image.length > 0 ? (
     <img
-      src={imageSrc}
+      src={c.image[0]}
       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-[1deg]"
     />
+  ) : (
+    <div className="flex flex-col items-center justify-center gap-2 text-[11px] text-[var(--text-muted)]">
 
-    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+      <img
+        src="/no-image.png"
+        className="w-12 h-12 opacity-60"
+      />
 
-    <div className={`absolute top-3 right-3 z-20 text-[11px] px-3 py-1 rounded-full font-medium backdrop-blur-md transition-all duration-300 group-hover:scale-105 ${statusStyle(c.status)}`}>
-      {c.status ? c.status.replace("_", " ") : "UNKNOWN"}
+      <span>No Image Available</span>
+
     </div>
+  )}
+
+  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+
+  <div className={`absolute top-3 right-3 z-20 text-[11px] px-3 py-1 rounded-full font-medium backdrop-blur-md transition-all duration-300 group-hover:scale-105 ${statusStyle(c.status)}`}>
+    {c.status ? c.status.replace("_", " ") : "UNKNOWN"}
+  </div>
 
   </div>
 
