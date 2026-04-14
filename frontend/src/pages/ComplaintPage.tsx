@@ -7,6 +7,11 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/ui/Button";
 import ComplaintHeader from "../components/ui/ComplaintHeader";
+import { X } from "lucide-react";
+
+type Props = {
+  onClose: () => void;
+};
 
 type FormState = {
   title: string;
@@ -20,7 +25,7 @@ type FormState = {
 
 const MAX_IMAGES = 5;
 
-const ComplaintPage = () => {
+const ComplaintPage = ({onClose}: Props)  => {
   const containerRef = useRef(null);
   const navigate = useNavigate();
 
@@ -170,19 +175,35 @@ return (
 
     <div className="w-full max-w-4xl bg-[var(--bg-glass)] backdrop-blur-2xl border border-[var(--border-subtle)] rounded-[var(--radius-lg)] shadow-[var(--shadow-strong)] px-6 md:px-10 py-8 md:py-10 space-y-8">
 
-      <div className="text-center space-y-3">
-        <h1 className="c-heading text-[30px] md:text-[40px] font-semibold tracking-tight text-[var(--text-primary)] leading-tight">
-          Raise a{" "}
-          <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),var(--accent-aurora))]">
-            Complaint
-          </span>
-        </h1>
-        <p className="c-sub text-[15px] md:text-[16px] text-[var(--text-secondary)] max-w-xl mx-auto leading-relaxed">
-          Share your concern clearly and securely. Your report helps us take faster and smarter action.
-        </p>
-      
-     
-      </div>
+      <div className="relative text-center space-y-3 mb-6">
+
+<button
+  type="button"
+  onClick={(e) => {
+    e.stopPropagation();
+
+    if (typeof onClose === "function") {
+      onClose(); 
+    } else {
+      navigate("/");
+    }
+  }}
+  className="absolute right-0 top-0 p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition-all duration-200 active:scale-90 z-50"
+>
+  <X className="w-5 h-5 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors cursor-pointer" />
+</button>
+  <h1 className="c-heading text-[30px] md:text-[40px] font-semibold tracking-tight text-[var(--text-primary)] leading-tight">
+    Raise a{" "}
+    <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),var(--accent-aurora))]">
+      Complaint
+    </span>
+  </h1>
+
+  <p className="c-sub text-[15px] md:text-[16px] text-[var(--text-secondary)] max-w-xl mx-auto leading-relaxed">
+    Share your concern clearly and securely. Your report helps us take faster and smarter action.
+  </p>
+
+</div>
 <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-5">
 
       <input
