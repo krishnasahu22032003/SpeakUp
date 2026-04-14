@@ -10,6 +10,7 @@ import {
 import UserDashboardHeader from "../components/ui/UserDashboardHeader";
 import ComplaintModal from "../components/ui/DashboardComplaintModal";
 import { GetUserComplaints } from "../lib/services/ComplaintService";
+import { Pencil } from "lucide-react";
 
 type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
 
@@ -20,6 +21,12 @@ const UserDashboardPage = () => {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [editingComplaint, setEditingComplaint] = useState<any>(null);
+
+  const handleEdit = (complaint: any) => {
+  setEditingComplaint(complaint);
+  setismodalOpen(true);
+};
 
   useEffect(() => {
     const fetchComplaints = async () => {
@@ -157,6 +164,33 @@ const statusStyle = (status?: string) => {
 >
 
   <div className="relative h-44 w-full overflow-hidden flex items-center justify-center">
+    <div className="absolute top-3 left-3 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300">
+
+  <button
+    onClick={() => handleEdit(c)}
+    className="
+      flex items-center gap-1.5
+      px-3 py-1.5
+      rounded-full
+      text-[11px] font-medium
+
+      bg-white/10 backdrop-blur-md
+      border border-white/20
+
+      text-white
+
+      hover:bg-white/20
+      hover:scale-105
+      active:scale-95
+
+      transition-all duration-300
+    "
+  >
+    <Pencil className="w-3.5 h-3.5" />
+    Edit
+  </button>
+
+</div>
 
 {Array.isArray(c.image) && c.image.length > 0 ? (
     <img
@@ -226,7 +260,6 @@ const statusStyle = (status?: string) => {
     <div className="absolute -top-20 -left-20 w-52 h-52 bg-[var(--accent-core)] blur-[120px] opacity-20" />
     <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#00E5FF] blur-[100px] opacity-10" />
   </div>
-
 </div>
                 );
               })
@@ -257,11 +290,23 @@ const statusStyle = (status?: string) => {
         </div>
       </section>
 
-     {ismodalOpen && (
+   {ismodalOpen && (
   <ComplaintModal
-    onClose={() => setismodalOpen(false)}
-    onSuccess={(newComplaint) => {
-      setComplaints((prev) => [newComplaint, ...prev]);
+    onClose={() => {
+      setismodalOpen(false);
+      setEditingComplaint(null);
+    }}
+    initialData={editingComplaint}
+    onSuccess={(updatedComplaint) => {
+      if (editingComplaint) {
+        setComplaints((prev) =>
+          prev.map((c) =>
+            c.id === updatedComplaint.id ? updatedComplaint : c
+          )
+        );
+      } else {
+        setComplaints((prev) => [updatedComplaint, ...prev]);
+      }
     }}
   />
 )}
