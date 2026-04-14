@@ -64,4 +64,15 @@ export async function UpdateUserDetails(UserUpdateDeails: UserDetails) {
     }
     return res.user;
 
+};
+
+export async function GetUserComplaints(page = 1, limit = 6) {
+  const res = await API<{
+    success: boolean;
+    data: any[];
+  }>(`user-complaints?page=${page}&limit=${limit}`, {
+    method: "GET",
+  });
+
+  return res.data;
 }

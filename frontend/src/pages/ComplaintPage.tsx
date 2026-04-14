@@ -180,6 +180,8 @@ return (
         <p className="c-sub text-[15px] md:text-[16px] text-[var(--text-secondary)] max-w-xl mx-auto leading-relaxed">
           Share your concern clearly and securely. Your report helps us take faster and smarter action.
         </p>
+      
+     
       </div>
 <div className="flex flex-col gap-4 md:grid md:grid-cols-2 md:gap-5">
 
