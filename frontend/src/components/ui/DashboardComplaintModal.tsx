@@ -3,7 +3,7 @@ import gsap from "gsap";
 import { X } from "lucide-react";
 import { compressImage } from "../../utils/compressImage";
 import { uploadToCloudinary } from "../../utils/uploadToCloudinary";
-import { CreateComplaint } from "../../lib/services/ComplaintService";
+import { CreateComplaint, UpdateUserComplaint } from "../../lib/services/ComplaintService";
 import { toast } from "sonner";
 import Button from "./Button";
 
@@ -114,7 +114,7 @@ const handleSubmit = async () => {
 
     let imageUrls: string[] = [];
 
-    // ✅ Only upload images if user selected new ones
+    // upload only if new images selected
     if (form.images.length > 0) {
       imageUrls = await uploadImages(form.images);
     }
@@ -122,24 +122,19 @@ const handleSubmit = async () => {
     let res;
 
     if (initialData) {
-      // 🔥 UPDATE FLOW (PATCH)
-      res = await Com(`user/update/${initialData.id}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          title: form.title,
-          description: form.description,
-          type: form.type,
-          location: form.location || undefined,
-          latitude: form.latitude ? Number(form.latitude) : undefined,
-          longitude: form.longitude ? Number(form.longitude) : undefined,
-          ...(imageUrls.length > 0 && { image: imageUrls }),
-        }),
+      res = await UpdateUserComplaint(initialData.id, {
+        title: form.title,
+        description: form.description,
+        type: form.type,
+        location: form.location || undefined,
+        latitude: form.latitude ? Number(form.latitude) : undefined,
+        longitude: form.longitude ? Number(form.longitude) : undefined,
+        ...(imageUrls.length > 0 && { image: imageUrls }),
       });
 
       toast.success("Complaint updated successfully ✨");
 
     } else {
-      // 🔥 CREATE FLOW (your existing logic untouched)
       res = await CreateComplaint({
         title: form.title,
         description: form.description,
@@ -153,8 +148,7 @@ const handleSubmit = async () => {
       toast.success("Complaint submitted 🎉");
     }
 
-    // ✅ works for both create + update
-    onSuccess?.(res.data);
+    onSuccess?.(res);
 
     onClose();
 
