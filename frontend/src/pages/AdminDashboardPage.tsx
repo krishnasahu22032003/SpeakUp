@@ -5,14 +5,17 @@ import {
   Globe,
   Clock,
   Shield,
+  Pencil,
 } from "lucide-react";
 import AdminDashboardHeader from "../components/ui/AdminDashboardHeader";
 import { GetAdminComplaints } from "../lib/services/AdminComplaints";
+import { GetAdminDetails } from "../lib/services/AdminAuthService";
 import AdminComplaintModal from "../components/ui/AdminComplaintModal";
 
 const AdminDashboardPage = () => {
   const containerRef = useRef(null);
   const [complaints, setComplaints] = useState<any[]>([]);
+  const [admin, setAdmin] = useState<any>(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -20,24 +23,26 @@ const AdminDashboardPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
-    
-    const fetchComplaints = async () => {
+    const fetchAll = async () => {
       try {
         setLoading(true);
 
-        const res = await GetAdminComplaints(page, 6);
+        const [complaintsRes, adminRes] = await Promise.all([
+          GetAdminComplaints(page, 6),
+          GetAdminDetails(),
+        ]);
 
-        setComplaints(res.complaints || []);
-        setHasMore(res.complaints?.length >= 6);
+        setComplaints(complaintsRes.complaints || []);
+        setHasMore(complaintsRes.complaints?.length >= 6);
+        setAdmin(adminRes);
       } catch (err) {
         console.error(err);
-        setComplaints([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchComplaints();
+    fetchAll();
   }, [page]);
 
   useEffect(() => {
@@ -65,14 +70,6 @@ const AdminDashboardPage = () => {
 
     return () => ctx.revert();
   }, []);
-
-  useEffect(() => {
-    gsap.fromTo(
-      ".d-card:first-child",
-      { scale: 0.9, opacity: 0 },
-      { scale: 1, opacity: 1, duration: 0.4 }
-    );
-  }, [complaints]);
 
   const statusStyle = (status?: string) => {
     switch (status) {
@@ -110,15 +107,15 @@ const AdminDashboardPage = () => {
                 </span>
               </div>
 
-              <h1 className="d-title text-[32px] md:text-[44px] font-semibold tracking-tight text-[var(--text-primary)] leading-[1.1]">
-                <span className="mr-2">Manage</span>
+              <h1 className="d-title text-[32px] md:text-[44px] font-semibold tracking-tight text-[var(--text-primary)]">
+                Welcome back,{" "}
                 <span className="bg-clip-text text-transparent bg-[linear-gradient(135deg,var(--accent-core),#7A5CFF,#00E5FF)]">
-                  Complaints
+                  {admin?.username || "Admin"}
                 </span>
               </h1>
 
-              <p className="d-sub text-[var(--text-secondary)] text-sm md:text-base max-w-xl leading-relaxed">
-                Review, monitor and take action on user complaints across the platform.
+              <p className="d-sub text-[var(--text-secondary)] text-sm md:text-base max-w-xl">
+                Monitor activity, manage complaints, and keep the system running smoothly.
               </p>
             </div>
 
@@ -140,11 +137,7 @@ const AdminDashboardPage = () => {
               complaints.map((c, i) => (
                 <div
                   key={c.id || i}
-                  onClick={() => {
-                    setSelectedComplaint(c);
-                    setModalOpen(true);
-                  }}
-                  className="cursor-pointer d-card group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl shadow-[var(--shadow-soft)] min-h-[270px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[var(--shadow-strong)]"
+                  className="d-card group relative flex flex-col overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--bg-glass)] backdrop-blur-xl shadow-[var(--shadow-soft)] min-h-[270px] transition-all duration-500 hover:-translate-y-2 hover:shadow-[var(--shadow-strong)]"
                 >
 
                   <div className="relative h-44 w-full overflow-hidden flex items-center justify-center">
@@ -152,7 +145,7 @@ const AdminDashboardPage = () => {
                     {Array.isArray(c.image) && c.image.length > 0 ? (
                       <img
                         src={c.image[0]}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-[1deg]"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       />
                     ) : (
                       <div className="flex flex-col items-center justify-center gap-2 text-[11px] text-[var(--text-muted)]">
@@ -161,10 +154,10 @@ const AdminDashboardPage = () => {
                       </div>
                     )}
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
-                    <div className={`absolute top-3 right-3 z-20 text-[11px] px-3 py-1 rounded-full font-medium backdrop-blur-md transition-all duration-300 ${statusStyle(c.status)}`}>
-                      {c.status ? c.status.replace("_", " ") : "UNKNOWN"}
+                    <div className={`absolute top-3 right-3 text-[11px] px-3 py-1 rounded-full ${statusStyle(c.status)}`}>
+                      {c.status?.replace("_", " ")}
                     </div>
 
                   </div>
@@ -172,41 +165,54 @@ const AdminDashboardPage = () => {
                   <div className="p-4 flex flex-col gap-3">
 
                     <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">
-                      {c.title || "No Title"}
+                      {c.title}
                     </h3>
 
                     <p className="text-[12px] text-[var(--text-secondary)] line-clamp-2">
-                      {c.description || "No description"}
+                      {c.description}
                     </p>
 
                     <div className="flex flex-col gap-2 text-[11px] text-[var(--text-muted)]">
 
                       <div className="flex items-center gap-2">
                         <MapPin className="w-3.5 h-3.5" />
-                        <span>{c.location || "Unknown"}</span>
+                        <span>{c.location}</span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Globe className="w-3.5 h-3.5" />
-                        <span>{c.latitude || "-"}, {c.longitude || "-"}</span>
+                        <span>{c.latitude}, {c.longitude}</span>
                       </div>
 
                       <div className="flex items-center gap-2">
                         <Clock className="w-3.5 h-3.5" />
-                        <span>
-                          {c.createdAt
-                            ? new Date(c.createdAt).toLocaleDateString()
-                            : "-"}
-                        </span>
+                        <span>{new Date(c.createdAt).toLocaleDateString()}</span>
                       </div>
 
                     </div>
 
                   </div>
 
-                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 pointer-events-none">
-                    <div className="absolute -top-20 -left-20 w-52 h-52 bg-[var(--accent-core)] blur-[120px] opacity-20" />
-                    <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#00E5FF] blur-[100px] opacity-10" />
+                  <div className="flex justify-end p-3 pt-0">
+
+                    <button
+                      onClick={() => {
+                        setSelectedComplaint(c);
+                        setModalOpen(true);
+                      }}
+                      className="
+                      cursor-pointer
+                        flex items-center gap-2 px-4 py-2 rounded-xl
+                        text-xs font-semibold
+                        bg-[var(--accent-core)]/20
+                        border border-[var(--accent-core)]/30
+                        hover:scale-105 transition
+                      "
+                    >
+                      <Pencil className="w-4 h-4" />
+                      Update
+                    </button>
+
                   </div>
 
                 </div>
@@ -217,7 +223,7 @@ const AdminDashboardPage = () => {
 
           <div className="flex justify-center gap-4 pt-6">
             <button
-              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)] hover:scale-105 transition"
+              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)]"
               disabled={page === 1}
               onClick={() => setPage((prev) => prev - 1)}
             >
@@ -225,7 +231,7 @@ const AdminDashboardPage = () => {
             </button>
 
             <button
-              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)] hover:scale-105 transition"
+              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)]"
               disabled={!hasMore}
               onClick={() => setPage((prev) => prev + 1)}
             >

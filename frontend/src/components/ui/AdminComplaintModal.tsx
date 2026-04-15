@@ -24,7 +24,7 @@ export default function AdminComplaintModal({
       gsap.fromTo(
         modalRef.current,
         { opacity: 0, y: 40, scale: 0.96 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" }
+        { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out" }
       );
     }
   }, []);
@@ -81,11 +81,12 @@ export default function AdminComplaintModal({
       <div
         ref={modalRef}
         className="
-          relative z-10 w-full max-w-2xl max-h-[90vh] overflow-y-auto
+          relative z-10 w-full max-w-lg
           rounded-2xl bg-[var(--bg-glass)]
           border border-[var(--border-subtle)]
-          shadow-[var(--shadow-strong)]
-          backdrop-blur-2xl p-6
+          shadow-[0_20px_80px_rgba(0,0,0,0.6)]
+          backdrop-blur-2xl
+          p-5 sm:p-6
         "
       >
 
@@ -94,41 +95,41 @@ export default function AdminComplaintModal({
           <div className="absolute -bottom-16 -left-16 w-56 h-56 bg-[var(--accent-calm)] opacity-20 blur-3xl rounded-full" />
         </div>
 
-        <div className="relative z-10 flex justify-between items-start mb-5">
+        <div className="relative z-10 flex justify-between items-start mb-4">
           <div>
-            <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            <h2 className="text-[17px] font-semibold tracking-tight text-[var(--text-primary)]">
               Complaint Details
             </h2>
-            <p className="text-sm text-[var(--text-secondary)]">
+            <p className="text-xs text-[var(--text-secondary)]">
               Review and update complaint status
             </p>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-[var(--bg-elevated)]"
+            className="p-2 rounded-lg hover:bg-[var(--bg-elevated)] transition cursor-pointer"
           >
             <X size={18} />
           </button>
         </div>
 
-        <div className="relative z-10 space-y-4">
+        <div className="relative z-10 space-y-3">
 
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Title</p>
-            <h3 className="text-[var(--text-primary)] font-medium">
+            <p className="text-[10px] text-[var(--text-muted)]">Title</p>
+            <h3 className="text-[14px] font-medium text-[var(--text-primary)]">
               {complaint.title}
             </h3>
           </div>
 
           <div>
-            <p className="text-xs text-[var(--text-muted)]">Description</p>
-            <p className="text-[var(--text-secondary)] text-sm">
+            <p className="text-[10px] text-[var(--text-muted)]">Description</p>
+            <p className="text-[12px] text-[var(--text-secondary)] leading-relaxed">
               {complaint.description}
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
               <p className="text-[var(--text-muted)]">Location</p>
               <p className="text-[var(--text-primary)]">
@@ -147,21 +148,23 @@ export default function AdminComplaintModal({
           {complaint.image?.[0] && (
             <img
               src={complaint.image[0]}
-              className="w-full h-52 object-cover rounded-xl"
+              className="w-full h-44 object-cover rounded-xl"
             />
           )}
 
           <div>
-            <p className="text-xs text-[var(--text-muted)] mb-1">Status</p>
+            <p className="text-[10px] text-[var(--text-muted)] mb-1">Status</p>
 
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
               className="
-                w-full h-11 px-3 rounded-xl
+              cursor-pointer
+                w-full h-10 px-3 rounded-xl
                 bg-[var(--bg-elevated)]
                 border border-[var(--border-subtle)]
-                text-[var(--text-primary)]
+                text-[var(--text-primary)] text-sm
+                focus:outline-none focus:ring-1 focus:ring-[var(--accent-core)]
               "
             >
               <option value="PENDING">Pending</option>
@@ -173,14 +176,15 @@ export default function AdminComplaintModal({
 
         </div>
 
-        <div className="flex gap-3 mt-6">
+        <div className="flex gap-3 mt-5">
 
           <button
             onClick={onClose}
             className="
-              flex-1 h-11 rounded-xl
+            cursor-pointer
+              flex-1 h-10 rounded-xl
               bg-white/5 border border-white/10
-              text-[var(--text-secondary)]
+              text-[var(--text-secondary)] text-sm
               hover:bg-white/10 transition
             "
           >
@@ -191,11 +195,14 @@ export default function AdminComplaintModal({
             onClick={handleUpdate}
             disabled={loading}
             className="
-              flex-1 h-11 rounded-xl
+            cursor-pointer
+              flex-1 h-10 rounded-xl
               bg-[var(--accent-core)]
-              text-white font-medium
-              hover:shadow-[0_0_20px_rgba(47,63,168,0.5)]
-              transition
+              text-white text-sm font-semibold
+              hover:scale-[1.02]
+              active:scale-[0.97]
+              transition-all duration-300
+              shadow-[0_0_20px_rgba(47,63,168,0.45)]
             "
           >
             {loading ? "Updating..." : "Update Status"}

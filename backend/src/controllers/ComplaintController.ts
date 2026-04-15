@@ -206,35 +206,46 @@ export async function AdminUpdateComplaint(req: Request, res: Response) {
         return res.status(403).json({
             success: false,
             message: "Unauthorized"
-        })
-    };
-    const id = req.params.id as string
-    const parsedData = AdminupdateComplaintSchema.safeParse(req.body);
-    if(!parsedData.success){
-        return res.status(400).json({
-            success:false,
-            message:"Invalid input"
-        })
-    };
-   const {status , updatedAt} = parsedData.data ; 
-    try {
-        const result = await prisma.complaint.updateMany({
-            where: {
-                complaintId: id,
-                updatedAt: new Date(updatedAt)
-            },
-            data: {
-                status,
-
-            }
         });
-        if (result.count === 0) {
-            return res.status(409).json({
+    }
+
+    const id = req.params.id as string;
+
+    const parsedData = AdminupdateComplaintSchema.safeParse(req.body);
+
+    if (!parsedData.success) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid input"
+        });
+    }
+
+    const { status, updatedAt } = parsedData.data;
+
+    try {
+
+        const complaint = await prisma.complaint.findUnique({
+            where: { id }
+        });
+
+        if (!complaint) {
+            return res.status(404).json({
                 success: false,
-                message:
-                    "This complaint was already updated by another admin. Please refresh.",
+                message: "Complaint not found"
             });
         }
+
+        if (complaint.updatedAt.toISOString() !== new Date(updatedAt).toISOString()) {
+            return res.status(409).json({
+                success: false,
+                message: "This complaint was already updated by another admin. Please refresh.",
+            });
+        }
+
+        await prisma.complaint.update({
+            where: { id },
+            data: { status }
+        });
 
         return res.status(200).json({
             success: true,
@@ -246,9 +257,9 @@ export async function AdminUpdateComplaint(req: Request, res: Response) {
         return res.status(500).json({
             success: false,
             message: "Internal server error"
-        })
+        });
     }
-};
+}
 
 export async function UserUpdateComplaint(req:Request,res:Response){
 
