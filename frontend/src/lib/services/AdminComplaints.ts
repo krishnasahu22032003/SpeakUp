@@ -14,4 +14,22 @@ export async function GetAdminComplaints(page = 1, limit = 10) {
   });
 
   return res.data;
-}
+};
+
+export async function AdminUpdateComplaint(
+  id: string,
+  payload: {
+    status: "PENDING" | "IN_PROGRESS" | "RESOLVED" | "DISMISSED";
+    updatedAt: string;
+  }
+) {
+  const res = await ComplaintAPI<{
+    success: boolean;
+    message: string;
+  }>(`admin/update/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+
+  return res;
+};
