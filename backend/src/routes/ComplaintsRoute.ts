@@ -9,9 +9,8 @@ const ComplaintRouter = express.Router();
 ComplaintRouter.post("/create",OptionalUserAuthMiddleware ,CreateComplaint);
 ComplaintRouter.get("/user-complaints", UserAuthMiddleware, GetUserComplaint);
 ComplaintRouter.get("/admin-complaints", UserAuthMiddleware, AdminMiddleware, GetAdminComplaint);
-ComplaintRouter.delete("/delete/:id", UserAuthMiddleware, AdminMiddleware, DeleteComplaint);
+ComplaintRouter.delete("/delete/:id", UserAuthMiddleware, DeleteComplaint);
 ComplaintRouter.patch("/admin/update/:id", UserAuthMiddleware, AdminMiddleware, AdminUpdateComplaint);
 ComplaintRouter.patch("/user/update/:id", UserAuthMiddleware, UserUpdateComplaint);
-
 
 export default ComplaintRouter; 

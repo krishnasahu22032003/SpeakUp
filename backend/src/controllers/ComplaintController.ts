@@ -142,15 +142,14 @@ export async function GetAdminComplaint(req: Request, res: Response) {
 }
 
 export async function DeleteComplaint(req: Request, res: Response) {
-
-    if (!req.user?.id || req.user.role !== "ADMIN") {
-        return res.status(403).json({
+    if (!req.user?.id) {
+        return res.status(401).json({
             success: false,
-            message: "Forbidden"
+            message: "Unauthorized"
         });
     }
 
-    const id = req.params.id as string;
+    const id = req.params.id as string ;
 
     if (!id) {
         return res.status(400).json({
@@ -160,10 +159,30 @@ export async function DeleteComplaint(req: Request, res: Response) {
     }
 
     try {
+
+        const complaint = await prisma.complaint.findUnique({
+            where: { id }
+        });
+
+        if (!complaint) {
+            return res.status(404).json({
+                success: false,
+                message: "Complaint not found"
+            });
+        }
+
+        const isOwner = complaint.userId === req.user.id;
+        const isAdmin = req.user.role === "ADMIN";
+
+        if (!isOwner && !isAdmin) {
+            return res.status(403).json({
+                success: false,
+                message: "You are not allowed to delete this complaint"
+            });
+        }
+
         await prisma.complaint.delete({
-            where: {
-                id
-            }
+            where: { id }
         });
 
         return res.status(200).json({
@@ -171,15 +190,8 @@ export async function DeleteComplaint(req: Request, res: Response) {
             message: "Complaint deleted successfully"
         });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("Error while deleting the complaint", error);
-
-        if (error.code === "P2025") {
-            return res.status(404).json({
-                success: false,
-                message: "Complaint not found"
-            });
-        }
 
         return res.status(500).json({
             success: false,
