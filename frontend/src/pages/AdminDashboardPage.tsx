@@ -20,6 +20,7 @@ const AdminDashboardPage = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
+    
     const fetchComplaints = async () => {
       try {
         setLoading(true);
