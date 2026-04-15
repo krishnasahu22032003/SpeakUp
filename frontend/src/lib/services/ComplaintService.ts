@@ -58,3 +58,15 @@ export async function UpdateUserComplaint(id: string, payload: any) {
 
   return res.data;
 };
+
+export async function DeleteUserComplaint(id: string) {
+  const res = await ComplaintAPI<{
+    success: boolean;
+    message: string;
+  }>(`delete/${id}`, {
+    method: "DELETE",
+  });
+
+  return res;
+};
+
