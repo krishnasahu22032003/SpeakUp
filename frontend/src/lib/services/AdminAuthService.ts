@@ -1,4 +1,3 @@
-import API from "../../api/UserAPI";
 import AdminAPI from "../../api/AdminApi";
 
 interface AdminDetails {

@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../../ThemeContext";
-import { Sun, Moon, User, LogOut, Settings } from "lucide-react";
+import { Sun, Moon, User, LogOut } from "lucide-react";
 import gsap from "gsap";
 import { UserSignOut } from "../../lib/services/AuthService";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
-import UpdateProfileModal from "./UpdateProfileModal";
+import { AdminSingOut } from "../../lib/services/AdminAuthService";
 
 const quotes = [
-  "Every voice deserves to be heard.",
-  "Silence hides problems. SpeakUp reveals them.",
-  "Your report can create real change.",
-  "Small voices. Big impact.",
+  "Monitor. Analyze. Resolve.",
+  "Every complaint is actionable intelligence.",
+  "Turn reports into measurable impact.",
+  "Control the system. Improve the outcome.",
 ];
 
 export default function AdminDashboardHeader() {
@@ -20,7 +20,6 @@ export default function AdminDashboardHeader() {
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
   const [loading , setLoading]= useState<boolean>(false);
-  const [ismodalOpen , setismodalOpen] =  useState<boolean>(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const quoteRef = useRef(null);
   const navigate = useNavigate();
@@ -81,12 +80,12 @@ export default function AdminDashboardHeader() {
 
    try{
     
-   await UserSignOut();
+   await AdminSingOut();
 
    toast.success("User SignOut Success");
     
    setTimeout(() => {
-    navigate("/signin")
+    navigate("/admin/signin")
    }, 1500);
    }catch(err){
    console.log((err as Error).message);

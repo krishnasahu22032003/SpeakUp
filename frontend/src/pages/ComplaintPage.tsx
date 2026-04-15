@@ -10,7 +10,7 @@ import ComplaintHeader from "../components/ui/ComplaintHeader";
 import { X } from "lucide-react";
 
 type Props = {
-  onClose: () => void;
+  onClose?: () => void;
 };
 
 type FormState = {
