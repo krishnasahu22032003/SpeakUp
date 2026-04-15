@@ -6,11 +6,13 @@ import {
   Globe,
   Clock,
   Activity,
+  Trash2,
 } from "lucide-react";
 import UserDashboardHeader from "../components/ui/UserDashboardHeader";
 import ComplaintModal from "../components/ui/DashboardComplaintModal";
-import { GetUserComplaints } from "../lib/services/ComplaintService";
+import { DeleteUserComplaint, GetUserComplaints } from "../lib/services/ComplaintService";
 import { Pencil } from "lucide-react";
+import { toast } from "sonner";
 
 type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
 
@@ -48,7 +50,21 @@ const UserDashboardPage = () => {
 
     fetchComplaints();
   }, [page]);
+const handleDelete = async (id: string) => {
+  const confirmDelete = confirm("Are you sure you want to delete this complaint?");
+  if (!confirmDelete) return;
 
+  const promise = DeleteUserComplaint(id);
+
+  toast.promise(promise, {
+    loading: "Deleting complaint...",
+    success: () => {
+      setComplaints((prev) => prev.filter((c) => c.id !== id));
+      return "Complaint deleted successfully";
+    },
+    error: "Failed to delete complaint",
+  });
+};
   useEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
@@ -165,30 +181,31 @@ const statusStyle = (status?: string) => {
 
   <div className="relative h-44 w-full overflow-hidden flex items-center justify-center">
     <div className="absolute top-3 left-3 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300">
+<button
+  onClick={() => handleDelete(c.id)}
+  className="
+    absolute z-20
+    cursor-pointer
+    flex items-center justify-center
+    w-9 h-9 rounded-full
 
-  <button
-    onClick={() => handleEdit(c)}
-    className="
-      flex items-center gap-1.5
-      px-3 py-1.5
-      rounded-full
-      text-[11px] font-medium
+    bg-black/50 backdrop-blur-md
+    border border-white/20
 
-      bg-white/10 backdrop-blur-md
-      border border-white/20
+    text-white
 
-      text-white
+    hover:bg-rose-500/80
+    hover:text-white
+    hover:scale-110
 
-      hover:bg-white/20
-      hover:scale-105
-      active:scale-95
+    active:scale-95
+    transition-all duration-300
 
-      transition-all duration-300
-    "
-  >
-    <Pencil className="w-3.5 h-3.5" />
-    Edit
-  </button>
+    shadow-[0_0_10px_rgba(0,0,0,0.6)]
+  "
+>
+  <Trash2 className="w-4 h-4" />
+</button>
 
 </div>
 
@@ -260,6 +277,35 @@ const statusStyle = (status?: string) => {
     <div className="absolute -top-20 -left-20 w-52 h-52 bg-[var(--accent-core)] blur-[120px] opacity-20" />
     <div className="absolute bottom-0 right-0 w-40 h-40 bg-[#00E5FF] blur-[100px] opacity-10" />
   </div>
+  <div className="flex justify-end p-3 pt-0">
+
+  <button
+    onClick={() => handleEdit(c)}
+    className="
+      flex items-center gap-2
+      px-4 py-2
+      rounded-xl
+      cursor-pointer
+      text-xs font-semibold
+
+      bg-[var(--accent-core)]/20
+      text-[var(--text-primary)]
+      border border-[var(--accent-core)]/30
+
+      hover:bg-[var(--accent-core)]/30
+      hover:scale-105
+      active:scale-95
+
+      transition-all duration-300
+
+      shadow-[0_0_18px_rgba(47,63,168,0.35)]
+    "
+  >
+    <Pencil className="w-4 h-4" />
+    Update
+  </button>
+
+</div>
 </div>
                 );
               })
