@@ -1,9 +1,9 @@
-import React from 'react'
+import AdminDashboardHeader from "../components/ui/AdminDashboardHeader"
 
 const AdminDashboardPage = () => {
   return (
     <div>
-      AdminDashboardPage
+<AdminDashboardHeader/>
     </div>
   )
 }
