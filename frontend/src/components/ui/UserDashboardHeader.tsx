@@ -100,7 +100,7 @@ export default function UserDashboardHeader() {
       <header className={`header ${scrolled ? "header-scrolled" : ""}`}>
         <div className="header-inner">
           <div className="logo">
-            <a href="/" className="-mr-2">
+            <a className="-mr-2">
               <img src="/logo.png" alt="SpeakUp Logo" />
             </a>
             <span>SpeakUp</span>

@@ -18,6 +18,12 @@ export default function AdminComplaintModal({
   const modalRef = useRef<HTMLDivElement | null>(null);
   const [status, setStatus] = useState(complaint.status);
   const [loading, setLoading] = useState(false);
+  const [currentComplaint, setCurrentComplaint] = useState(complaint);
+
+    useEffect(() => {
+    setCurrentComplaint(complaint);
+    setStatus(complaint.status); 
+  }, [complaint]);
 
   useEffect(() => {
     if (modalRef.current) {
@@ -41,34 +47,30 @@ export default function AdminComplaintModal({
     };
   }, [onClose]);
 
-  const handleUpdate = async () => {
-    try {
-      setLoading(true);
+const handleUpdate = async () => {
+  try {
+    setLoading(true);
 
-      const res = await AdminUpdateComplaint(complaint.id, {
-        status,
-        updatedAt: complaint.updatedAt,
-      });
+    const res = await AdminUpdateComplaint(currentComplaint.id, {
+      status,
+      updatedAt: currentComplaint.updatedAt,
+    });
 
-      toast.success(res.message);
+    toast.success(res.message);
 
-      onUpdate({
-        ...complaint,
-        status,
-        updatedAt: new Date().toISOString(),
-      });
+    setCurrentComplaint(res.data); 
+    onUpdate(res.data); 
 
-      onClose();
-    } catch (err: any) {
-      if (err?.response?.status === 409) {
-        toast.error("Already updated by another admin. Refresh.");
-      } else {
-        toast.error("Update failed");
-      }
-    } finally {
-      setLoading(false);
+  } catch (err: any) {
+    if (err?.response?.status === 409) {
+      toast.error("Already updated by another admin. Refresh.");
+    } else {
+      toast.error("Update failed");
     }
-  };
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center px-3">

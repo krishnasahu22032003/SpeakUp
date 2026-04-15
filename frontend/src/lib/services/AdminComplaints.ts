@@ -1,5 +1,18 @@
 import ComplaintAPI from "../../api/ComplaintApi";
 
+type Complaint = {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  updatedAt: string;
+  createdAt: string;
+  location?: string;
+  latitude?: number;
+  longitude?: number;
+  image?: string[];
+};
+
 export async function GetAdminComplaints(page = 1, limit = 10) {
   const res = await ComplaintAPI<{
     success: boolean;
@@ -31,10 +44,11 @@ export async function AdminUpdateComplaint(
   const res = await ComplaintAPI<{
     success: boolean;
     message: string;
+    data: Complaint; // ✅ added
   }>(`admin/update/${id}`, {
     method: "PATCH",
     body: JSON.stringify(payload),
   });
 
   return res;
-};
+}

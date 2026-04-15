@@ -242,7 +242,7 @@ export async function AdminUpdateComplaint(req: Request, res: Response) {
             });
         }
 
-        await prisma.complaint.update({
+        const updatedComplaint = await prisma.complaint.update({
             where: { id },
             data: { status }
         });
@@ -250,6 +250,7 @@ export async function AdminUpdateComplaint(req: Request, res: Response) {
         return res.status(200).json({
             success: true,
             message: "Complaint status updated successfully",
+            data: updatedComplaint
         });
 
     } catch (error) {

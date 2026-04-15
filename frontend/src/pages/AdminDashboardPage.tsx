@@ -269,7 +269,7 @@ const AdminDashboardPage = () => {
 
           <div className="flex justify-center gap-4 pt-6">
             <button
-              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)]"
+              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)] cursor-pointer"
               disabled={page === 1}
               onClick={() => setPage((prev) => prev - 1)}
             >
@@ -277,7 +277,7 @@ const AdminDashboardPage = () => {
             </button>
 
             <button
-              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)]"
+              className="h-10 px-5 text-sm rounded-xl bg-[var(--bg-glass)] border border-[var(--border-subtle)] cursor-pointer"
               disabled={!hasMore}
               onClick={() => setPage((prev) => prev + 1)}
             >

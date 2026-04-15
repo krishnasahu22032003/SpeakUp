@@ -6,6 +6,7 @@ import { UserSignOut } from "../../lib/services/AuthService";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { AdminSingOut } from "../../lib/services/AdminAuthService";
+import AdminAuthStore from "../../store/AdminAuthStore";
 
 const quotes = [
   "Monitor. Analyze. Resolve.",
@@ -23,6 +24,7 @@ export default function AdminDashboardHeader() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const quoteRef = useRef(null);
   const navigate = useNavigate();
+  const { logout } = AdminAuthStore();
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
@@ -81,12 +83,12 @@ export default function AdminDashboardHeader() {
    try{
     
    await AdminSingOut();
-
-   toast.success("User SignOut Success");
+   logout();
+   toast.success("Admin SignOut Success");
     
    setTimeout(() => {
     navigate("/admin/signin")
-   }, 1500);
+   }, 1000);
    }catch(err){
    console.log((err as Error).message);
    toast.error((err as Error).message || "Error while signing Out");
@@ -99,7 +101,7 @@ export default function AdminDashboardHeader() {
       <header className={`header ${scrolled ? "header-scrolled" : ""}`}>
         <div className="header-inner">
           <div className="logo">
-            <a href="/" className="-mr-2">
+            <a  className="-mr-2">
               <img src="/logo.png" alt="SpeakUp Logo" />
             </a>
             <span>SpeakUp</span>
