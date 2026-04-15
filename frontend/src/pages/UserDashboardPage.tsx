@@ -13,6 +13,7 @@ import ComplaintModal from "../components/ui/DashboardComplaintModal";
 import { DeleteUserComplaint, GetUserComplaints } from "../lib/services/ComplaintService";
 import { Pencil } from "lucide-react";
 import { toast } from "sonner";
+import DeleteModal from "../components/ui/DeleteModal";
 
 type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
 
@@ -24,6 +25,8 @@ const UserDashboardPage = () => {
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [editingComplaint, setEditingComplaint] = useState<any>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null);
 
   const handleEdit = (complaint: any) => {
   setEditingComplaint(complaint);
@@ -50,19 +53,21 @@ const UserDashboardPage = () => {
 
     fetchComplaints();
   }, [page]);
-const handleDelete = async (id: string) => {
-  const confirmDelete = confirm("Are you sure you want to delete this complaint?");
-  if (!confirmDelete) return;
+const confirmDelete = async () => {
+  if (!selectedComplaintId) return;
 
-  const promise = DeleteUserComplaint(id);
+  const promise = DeleteUserComplaint(selectedComplaintId);
 
   toast.promise(promise, {
     loading: "Deleting complaint...",
     success: () => {
-      setComplaints((prev) => prev.filter((c) => c.id !== id));
-      return "Complaint deleted successfully";
+      setComplaints((prev) =>
+        prev.filter((c) => c.id !== selectedComplaintId)
+      );
+      setDeleteModalOpen(false);
+      return "Complaint deleted";
     },
-    error: "Failed to delete complaint",
+    error: "Failed to delete",
   });
 };
   useEffect(() => {
@@ -182,31 +187,27 @@ const statusStyle = (status?: string) => {
   <div className="relative h-44 w-full overflow-hidden flex items-center justify-center">
     <div className="absolute top-3 left-3 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300">
 <button
-  onClick={() => handleDelete(c.id)}
+  onClick={() => {
+    setSelectedComplaintId(c.id);
+    setDeleteModalOpen(true);
+  }}
   className="
-    absolute z-20
+    absolute z-20 
     cursor-pointer
     flex items-center justify-center
     w-9 h-9 rounded-full
-
     bg-black/50 backdrop-blur-md
     border border-white/20
-
     text-white
-
     hover:bg-rose-500/80
-    hover:text-white
     hover:scale-110
-
     active:scale-95
     transition-all duration-300
-
     shadow-[0_0_10px_rgba(0,0,0,0.6)]
   "
 >
   <Trash2 className="w-4 h-4" />
 </button>
-
 </div>
 
 {Array.isArray(c.image) && c.image.length > 0 ? (
@@ -356,6 +357,11 @@ const statusStyle = (status?: string) => {
     }}
   />
 )}
+<DeleteModal
+  open={deleteModalOpen}
+  onClose={() => setDeleteModalOpen(false)}
+  onConfirm={confirmDelete}
+/>
     </>
   );
 };
