@@ -6,11 +6,15 @@ import {
   Clock,
   Shield,
   Pencil,
+  Trash2,
 } from "lucide-react";
 import AdminDashboardHeader from "../components/ui/AdminDashboardHeader";
 import { GetAdminComplaints } from "../lib/services/AdminComplaints";
 import { GetAdminDetails } from "../lib/services/AdminAuthService";
 import AdminComplaintModal from "../components/ui/AdminComplaintModal";
+import DeleteModal from "../components/ui/DeleteModal";
+import { DeleteUserComplaint } from "../lib/services/ComplaintService";
+import { toast } from "sonner";
 
 const AdminDashboardPage = () => {
   const containerRef = useRef(null);
@@ -21,6 +25,26 @@ const AdminDashboardPage = () => {
   const [hasMore, setHasMore] = useState(true);
   const [selectedComplaint, setSelectedComplaint] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+  if (!selectedComplaintId) return;
+
+  const promise = DeleteUserComplaint(selectedComplaintId);
+
+  toast.promise(promise, {
+    loading: "Deleting complaint...",
+    success: () => {
+      setComplaints((prev) =>
+        prev.filter((c) => c.id !== selectedComplaintId)
+      );
+      setDeleteModalOpen(false);
+      return "Complaint deleted";
+    },
+    error: "Failed to delete",
+  });
+};
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -141,6 +165,28 @@ const AdminDashboardPage = () => {
                 >
 
                   <div className="relative h-44 w-full overflow-hidden flex items-center justify-center">
+                    <button
+  onClick={() => {
+    setSelectedComplaintId(c.id);
+    setDeleteModalOpen(true);
+  }}
+ className="
+  absolute top-3 left-3 z-20
+  cursor-pointer
+  flex items-center justify-center
+  w-9 h-9 rounded-full
+  bg-black/50 backdrop-blur-md
+  border border-white/20
+  text-white
+  hover:bg-rose-500/80
+  hover:scale-110
+  active:scale-95
+  transition-all duration-300
+  shadow-[0_0_10px_rgba(0,0,0,0.6)]
+"
+>
+  <Trash2 className="w-4 h-4" />
+</button>
 
                     {Array.isArray(c.image) && c.image.length > 0 ? (
                       <img
@@ -255,6 +301,11 @@ const AdminDashboardPage = () => {
           }}
         />
       )}
+      <DeleteModal
+  open={deleteModalOpen}
+  onClose={() => setDeleteModalOpen(false)}
+  onConfirm={confirmDelete}
+/>
     </>
   );
 };
