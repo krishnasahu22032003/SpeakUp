@@ -13,8 +13,13 @@ export async function GetAdminComplaints(page = 1, limit = 10) {
     method: "GET",
   });
 
-  return res.data;
-};
+  return {
+    complaints: res.data,
+    page: res.page,
+    total: res.total,
+    totalPages: res.totalPages,
+  };
+}
 
 export async function AdminUpdateComplaint(
   id: string,
