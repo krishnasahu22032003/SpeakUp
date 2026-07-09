@@ -1,0 +1,30 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="speakupShieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7C5CFF"/>
+      <stop offset="100%" stop-color="#22E6C8"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M100 8 L172 34 C174 34.8 175 36.8 175 39 L175 96 C175 143 142 180 100 195 C58 180 25 143 25 96 L25 39 C25 36.8 26 34.8 28 34 Z"
+    fill="url(#speakupShieldGradient)"
+  />
+
+  <g stroke="#ffffff" stroke-width="6.5" stroke-linecap="round" fill="none" opacity="0.95">
+    <path d="M62 68 C48 78 48 94 62 104"/>
+    <path d="M48 56 C26 72 26 100 48 116"/>
+  </g>
+  <g stroke="#ffffff" stroke-width="6.5" stroke-linecap="round" fill="none" opacity="0.95">
+    <path d="M138 68 C152 78 152 94 138 104"/>
+    <path d="M152 56 C174 72 174 100 152 116"/>
+  </g>
+
+  <rect x="85" y="52" width="30" height="52" rx="15" fill="#ffffff"/>
+  <path
+    d="M68 92 C68 116 86 132 100 132 C114 132 132 116 132 92"
+    stroke="#ffffff" stroke-width="7" stroke-linecap="round" fill="none"
+  />
+  <line x1="100" y1="132" x2="100" y2="152" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+  <line x1="80" y1="152" x2="120" y2="152" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+</svg>
