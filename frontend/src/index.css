@@ -191,11 +191,7 @@ h1, h2, h3 {
   font-family: "Satoshi", "Inter", sans-serif;
 }
 
-h1 { font-size: 38px; font-weight: 700; }
-h2 { font-size: 32px; font-weight: 600; }
-h3 { font-size: 18px; font-weight: 600; }
 
-p { font-size: 16px; font-weight: 400; }
 small { font-size: 13px; }
 
 ::-webkit-scrollbar {
