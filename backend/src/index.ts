@@ -5,6 +5,7 @@ import UserRouter from './routes/UserRoutes.js';
 import AdminRouter from './routes/AdminRoute.js';
 import ComplaintRouter from './routes/ComplaintsRoute.js';
 import cors from "cors"; 
+import HealthRouter from './routes/HealthRoute.js';
 
 const app = express();
 app.use(cors({origin:["http://localhost:5173"] , credentials:true }))
@@ -14,5 +15,6 @@ app.use(cookieParser());
 app.use('/api/v1/user', UserRouter);
 app.use('/api/v1/admin', AdminRouter);
 app.use('/api/v1/complaints',ComplaintRouter );
+app.use('/api/v1/health',HealthRouter );
 
 startServer(app);
