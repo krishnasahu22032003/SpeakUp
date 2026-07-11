@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../../ThemeContext";
 import { Sun, Moon, User, LogOut } from "lucide-react";
 import gsap from "gsap";
-import { UserSignOut } from "../../lib/services/AuthService";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { AdminSingOut } from "../../lib/services/AdminAuthService";

@@ -15,8 +15,6 @@ import { Pencil } from "lucide-react";
 import { toast } from "sonner";
 import DeleteModal from "../components/ui/DeleteModal";
 
-type Status = "PENDING" | "RESOLVED" | "IN_PROGRESS" | "DISMISSED";
-
 const UserDashboardPage = () => {
   const containerRef = useRef(null);
   const [ismodalOpen, setismodalOpen] = useState<boolean>(false);
